@@ -1,5 +1,6 @@
 # The Sesame Robot Project 
-<img width="95%" height="1728" alt="Untitled (7)" src="https://github.com/user-attachments/assets/9d7d88cb-b012-4611-9419-e154bb006078" />
+<img width="95%" height="1851" alt="sesame-wide" src="https://github.com/user-attachments/assets/84ea4e49-6fb9-46db-a336-ad07526de633" />
+
 
 **Greetings, from your new best friend.**
 
