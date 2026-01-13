@@ -32,7 +32,7 @@ There is also some included debugging firmware that may be helpful in getting yo
 
 ## Watch the launch video on YouTube
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/1UDsWkcQZhc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<a href="https://www.youtube.com/1UDsWkcQZhc/"><img src="https://github.com/user-attachments/assets/710cb5a6-163e-47e7-a294-5e2d2ab07627" width="70%" alt="thumb-youtube"></a>
 
 ## Getting Started
 
