@@ -17,7 +17,7 @@ If you're building your own Sesame Robot, PCBway is a great option for getting p
 
 
 ### PCB Layout:
-<img src="SDB-Layout.png" alt="SDB-Layout" width="70%">
+<img src="SDB-layout.png" alt="SDB-Layout" width="70%">
 
 
 
