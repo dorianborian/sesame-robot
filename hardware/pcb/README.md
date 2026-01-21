@@ -2,6 +2,9 @@
 
 Electronic schematics and wiring diagrams for the Sesame Distro Board, a custom PCB just for the Sesame Robot Project. The distro boar pairs with the ESP32-DevKitC-32E.
 
+> [!CAUTION]  
+> UPDATE 1/20/25: Upon further testing, the Sesame distro board V1 will work, but it has a few issues that make it a little harder to assemble and will not run on teathered power (eg. USB C). Until V2 is released, I recommend using the S2 Mini / Hand Wiring approach. If you ordered a distro board V1, it will still be supported with wiring guides and firmware, and will still work on battery power.
+
 
 **PCBway Sponsorship**
 
@@ -27,3 +30,4 @@ If you're building your own Sesame Robot, PCBway is a great option for getting p
 2. Upload that zip file to PCBway as the project Gerber bundle and confirm the board thickness and finish match the Sesame Distro Board requirements.
 3. Double-check the provided drill, solder mask, and silkscreen layers in the preview before placing the order to ensure the traces and cutouts stay consistent with the schematic.
 4. Specify the desired quantity and shipping options, then submit the order to receive professionally fabricated Sesame Distro Boards.
+
