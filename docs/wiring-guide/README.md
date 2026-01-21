@@ -9,7 +9,7 @@ Complete wiring guides for the Sesame Robot.
 The project supports two wiring strategies that suit different build constraints:
 
 - **S2 Mini / hand wiring:** Uses an ESP32-S2 Mini, loose headers, and point-to-point wiring. It is the lowest-cost option and easy to source, but it demands patience to keep the harness tidy and leaves less room for mistakes.
-- **Sesame Distro Board / ESP32 DevKit:** Uses the custom distro PCB stacked on an ESP32-DevKitC-32E. It front-loads the work into soldering headers and the buck converter but dramatically simplifies routing, labeling, and maintenance once assembled.
+- **Sesame Distro Board / ESP32 DevKit:** Uses the custom distro PCB stacked on an ESP32-DevKitC-32E. It front-loads the work into soldering headers and the buck converter but dramatically simplifies routing, labeling, and maintenance once assembled. Please note the V1 board is a prototype and may not have full functionality. I will be updating the design to improve it very soon!
 
 Pick the approach that matches your component availability and comfort with managing wire bundles; the remainder of this guide dives into both workflows.
 
@@ -75,8 +75,8 @@ When packing electronics into the frame, it's difficult with the hand wiring set
 
 ### Overview
 
-> [!IMPORTANT]  
-> The distro board is mounted on top of the ESP32 devkit, like a hat. 
+> [!CAUTION]  
+> UPDATE 1/20/25: Upon further testing, the Sesame distro board V1 will work, but it has a few issues that make it a little harder to assemble and will not run on teathered power (eg. USB C). Until V2 is released, I recommend using the S2 Mini / Hand Wiring approach. If you ordered a distro board V1, it will still be supported with wiring guides and firmware for the foreseeable future <3.
 
 This option provides a cleaner, more organized wiring solution.
 Consult the distro-board wiring diagram below for exact connection locations.
