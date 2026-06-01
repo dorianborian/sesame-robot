@@ -1,4 +1,4 @@
-# esame Robot Firmware
+# Sesame Robot Firmware
 
 This document provides technical information on the firmware architecture, control logic, and hardware abstraction layers used in the Sesame Robot.
 
