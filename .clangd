@@ -1,0 +1,6 @@
+CompileFlags:
+  CompilationDatabase: firmware/debugging-firmware/sesame-motor-tester/build
+  Remove:
+    - -mlongcalls
+    - -fstrict-volatile-bitfields
+    - -fno-tree-switch-conversion

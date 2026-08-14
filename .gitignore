@@ -1,1 +1,6 @@
 .vscode/launch.json
+
+# Arduino/Zed build outputs
+.cache/
+build/
+compile_commands.json

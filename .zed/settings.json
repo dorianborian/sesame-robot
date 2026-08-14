@@ -1,0 +1,15 @@
+{
+  "file_types": {
+    "C++": ["ino"]
+  },
+  "lsp": {
+    "clangd": {
+      "binary": {
+        "path": "/usr/bin/clangd",
+        "arguments": [
+          "--query-driver=/Users/vhpx/Library/Arduino15/packages/esp32/tools/esp-x32/2601/bin/xtensa-esp32s2-elf-g++"
+        ]
+      }
+    }
+  }
+}

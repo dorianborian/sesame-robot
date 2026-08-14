@@ -1,0 +1,11 @@
+# Arduino CLI project configuration
+default_profile: lolin_s2_mini
+profiles:
+  lolin_s2_mini:
+    fqbn: esp32:esp32:lolin_s2_mini
+    notes: Initialized project profile
+    libraries:
+      - Adafruit BusIO (1.17.4)
+      - Adafruit GFX Library (1.12.6)
+      - Adafruit SSD1306 (2.5.17)
+      - ESP32Servo (3.2.1)

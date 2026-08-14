@@ -10,7 +10,7 @@ Sesame Studio is a animation composer tool for the Sesame Robot. Use it to set s
 - **Views**: Top-down view and lateral angle guide for positioning.
 - **Color-Coding**: Servos (S0-S7) are color-coded in inputs and code for identification.
 - **Help Overlay**: Guide window accessible via button.
-- **Code Generation**: Formats `setServoAngle()` commands for `sesame-firmware.ino`.
+- **Code Generation**: Formats `setServoAngle()` commands for the `firmware/sesame-firmware-main` sketch.
 - **Timing**: Set delays for frames to create movements.
 
 ## Prerequisites

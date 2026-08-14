@@ -46,14 +46,15 @@ This document provides technical information on the firmware architecture, contr
 > [!IMPORTANT]
 > Use **ESP32Servo v3.0.9** for this project. Newer releases currently have a known issue where writing to one servo can affect multiple channels ([madhephaestus/ESP32Servo#103](https://github.com/madhephaestus/ESP32Servo/issues/103)).
 
+If you use Zed or another editor instead of Arduino IDE, install `arduino-cli` and use the project tasks in [.zed/tasks.json](../.zed/tasks.json). The default tasks target the Lolin S2 Mini configuration currently enabled in the source. This repo also includes [.zed/settings.json](../.zed/settings.json), which maps `.ino` files to C++ and starts `clangd` with the ESP32 compiler driver for editor IntelliSense.
+
 ### Flashing Steps
 
 1. **Connect your board** via USB to your computer
 2. **Open the firmware**:
 
-   - Open [sesame-firmware-main.ino](sesame-firmware-main.ino) in Arduino IDE
-   - Make sure you have it in a folder with the same name.
-   - Also include all of the .h header files.
+   - Open [sesame-firmware-main/sesame-firmware-main.ino](sesame-firmware-main/sesame-firmware-main.ino) in Arduino IDE.
+   - Keep the sketch inside the `sesame-firmware-main` folder with the included `.h` files. Arduino treats the folder as the sketch, and the primary `.ino` file must match that folder name.
 3. **Select your board**:
 
    - Go to **Tools → Board**
@@ -75,7 +76,7 @@ This document provides technical information on the firmware architecture, contr
    - Go to **Tools → Port** and select your ESP32's COM port
 6. **Choose your board configuration** in the code:
 
-   - Open [sesame-firmware-main.ino](sesame-firmware-main.ino)
+   - Open [sesame-firmware-main/sesame-firmware-main.ino](sesame-firmware-main/sesame-firmware-main.ino)
    - Find the pin configuration section (around line 55-65)
    - **If you built with the Lolin S2 Mini:** Uncomment the S2 Mini `servoPins` array and `I2C_SDA`/`I2C_SCL` defines. Comment out the Distro Board section.
    - **If you built with the Distro Board V3:** Uncomment the V3 `servoPins` array and `I2C_SDA`/`I2C_SCL` defines. Comment out others.
@@ -130,10 +131,10 @@ This document provides technical information on the firmware architecture, contr
 
 The firmware is split into several key files to keep the logic organized and assets easy to manage:
 
-- **[sesame-firmware-main.ino](sesame-firmware-main.ino)**: The main entry point containing the `setup()`, `loop()`, core system logic, network configuration, and API endpoints.
-- **[face-bitmaps.h](face-bitmaps.h)**: A dedicated header for OLED face macros and raw bitmap data. Now includes extensive conversational faces for voice assistant integration.
-- **[movement-sequences.h](movement-sequences.h)**: Definitions for all procedural movement and pose animations.
-- **[captive-portal.h](captive-portal.h)**: Contains the HTML, CSS, and JS for the web-based remote control interface.
+- **[sesame-firmware-main/sesame-firmware-main.ino](sesame-firmware-main/sesame-firmware-main.ino)**: The main entry point containing the `setup()`, `loop()`, core system logic, network configuration, and API endpoints.
+- **[sesame-firmware-main/face-bitmaps.h](sesame-firmware-main/face-bitmaps.h)**: A dedicated header for OLED face macros and raw bitmap data. Now includes extensive conversational faces for voice assistant integration.
+- **[sesame-firmware-main/movement-sequences.h](sesame-firmware-main/movement-sequences.h)**: Definitions for all procedural movement and pose animations.
+- **[sesame-firmware-main/captive-portal.h](sesame-firmware-main/captive-portal.h)**: Contains the HTML, CSS, and JS for the web-based remote control interface.
 
 ## Technical Implementation Overview
 
@@ -163,7 +164,7 @@ The firmware is built on the Arduino-ESP32 framework. Currently the firmware is 
 
 - **I2C Bus Hardware**: Utilizes the ESP32's hardware I2C controller at 400kHz (Fast Mode) for minimal latency when pushing full-frame buffers to the SSD1306 display.
 - **Memory Management (`PROGMEM`)**: Large 128x64 bitmap arrays (1024 bytes per frame) are stored in Flash memory using the `PROGMEM` attribute.
-- **Macro-Based Asset Management**: The firmware uses a `FACE_LIST` macro in [face-bitmaps.h](face-bitmaps.h) to automatically register and handle new faces, reducing the boilerplate required when adding animations.
+- **Macro-Based Asset Management**: The firmware uses a `FACE_LIST` macro in [face-bitmaps.h](sesame-firmware-main/face-bitmaps.h) to automatically register and handle new faces, reducing the boilerplate required when adding animations.
 - **Rendering Pipeline**: The `updateAnimatedFace()` function manages frame rates and sequence looping outside of the main movement logic to ensure smooth visual feedback even during complex movements.
 - **Dynamic WiFi Info Overlay**: The `updateWifiInfoScroll()` function composites scrolling connection information over the face bitmap during the first 30 seconds of operation (before first input), drawing the face as background with a black bar and white text overlay for readability.
 - **Idle Animation System**: Implements realistic idle behavior with randomized blinking (including double-blinks) and boomerang face animations, triggered automatically when no input is detected.
@@ -178,6 +179,25 @@ The firmware is built on the Arduino-ESP32 framework. Currently the firmware is 
   - `DNSServer`: Captive portal DNS redirection (included with ESP32 board support).
   - `WebServer`: HTTP server implementation (included with ESP32 board support).
 - **Tooling**: Arduino IDE 2.0+ recommended.
+
+### Zed / Arduino CLI Workflow
+
+Arduino sketches compile through Arduino's build system. Zed IntelliSense uses `clangd`, so the project task generates a compilation database from the real Arduino build and augments it with entries for the source `.ino` and local headers.
+
+1. Install `arduino-cli`.
+2. In Zed, run `task: spawn` and choose `Arduino: check CLI`. If the task cannot find `arduino-cli`, install it and restart Zed so its terminal PATH is refreshed.
+3. Run `Arduino: setup ESP32 core and libraries`, or install them manually:
+
+   ```bash
+   arduino-cli core update-index --additional-urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+   arduino-cli core install esp32:esp32 --additional-urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+   arduino-cli lib install "ESP32Servo@3.0.9" "Adafruit SSD1306" "Adafruit GFX Library"
+   ```
+
+4. Run `Arduino: compile Sesame (S2 Mini)`.
+5. Run `Arduino: generate compile database (S2 Mini)` to refresh IntelliSense.
+
+The compile database task writes `compile_commands.json` at the repo root for `clangd`. Generated build output is ignored by Git. Reload the Zed window after generating the database if completions do not appear immediately.
 
 ## Network Configuration & Connectivity
 
@@ -197,7 +217,7 @@ Connect to this network and navigate to any website to access the captive portal
 
 To connect the robot to your home or office WiFi network:
 
-1. **Enable Network Mode** in [sesame-firmware-main.ino](sesame-firmware-main.ino):
+1. **Enable Network Mode** in [sesame-firmware-main/sesame-firmware-main.ino](sesame-firmware-main/sesame-firmware-main.ino):
 
    ```cpp
    #define NETWORK_SSID "YourNetworkName"  // Your WiFi network name
@@ -668,7 +688,7 @@ The idle system uses:
 - `updateIdleBlink()` - Manages random blink timing and double-blink logic
 - `scheduleNextIdleBlink()` - Randomizes blink intervals for natural appearance
 
-To customize idle behavior, modify the timing values in [sesame-firmware-main.ino](sesame-firmware-main.ino):
+To customize idle behavior, modify the timing values in [sesame-firmware-main/sesame-firmware-main.ino](sesame-firmware-main/sesame-firmware-main.ino):
 
 ```cpp
 scheduleNextIdleBlink(3000, 7000);  // Min and max ms between blinks
@@ -695,7 +715,7 @@ The idle system uses:
 - `updateIdleBlink()` - Manages random blink timing and double-blink logic
 - `scheduleNextIdleBlink()` - Randomizes blink intervals for natural appearance
 
-To customize idle behavior, modify the timing values in [sesame-firmware-main.ino](sesame-firmware-main.ino):
+To customize idle behavior, modify the timing values in [sesame-firmware-main/sesame-firmware-main.ino](sesame-firmware-main/sesame-firmware-main.ino):
 
 ```cpp
 scheduleNextIdleBlink(3000, 7000);  // Min and max ms between blinks
@@ -769,11 +789,11 @@ The firmware abstracts pin definitions via the `servoPins` array. The default co
 
 ### Porting to Other ESP32 Variants
 
-To port this to a different ESP32 variant, modify the `servoPins` and `I2C_` defines in the header of [sesame-firmware-main.ino](sesame-firmware-main.ino). Ensure the chosen pins are PWM-capable and not "input-only".
+To port this to a different ESP32 variant, modify the `servoPins` and `I2C_` defines in the header of [sesame-firmware-main/sesame-firmware-main.ino](sesame-firmware-main/sesame-firmware-main.ino). Ensure the chosen pins are PWM-capable and not "input-only".
 
 ## Asset Pipeline & Face Customization
 
-To maintain a clean main source file and optimize performance, face bitmaps are decoupled from the primary logic. Faces are managed in [face-bitmaps.h](face-bitmaps.h) using a "Single Source of Truth" macro system.
+To maintain a clean main source file and optimize performance, face bitmaps are decoupled from the primary logic. Faces are managed in [face-bitmaps.h](sesame-firmware-main/face-bitmaps.h) using a "Single Source of Truth" macro system.
 
 ### Face Library
 
@@ -814,18 +834,18 @@ The "talk_" variants feature open mouths for lip-sync and animated speech. These
 1. **Image Creation**: Find faces using Kaomoji or [Emojicombos](https://emojicombos.com/kaomoji). Create a `128x64` image in a tool like [jsPaint](https://jspaint.app/).
 2. **Bitmap Conversion**: Use [image2cpp](https://javl.github.io/image2cpp/) with `Horizontal` scaling, `128x64` resolution, and `Arduino Code` output.
 3. **Registration**:
-   - Add your face name to the `FACE_LIST` macro in [face-bitmaps.h](face-bitmaps.h).
-   - Paste the generated C array into [face-bitmaps.h](face-bitmaps.h) right after the last bitmap in the list.
-   - (Optional) For animations, add numbered suffixes (e.g., `_1`, `_2`) and register the FPS in the `faceFpsEntries` in [sesame-firmware-main.ino](sesame-firmware-main.ino).
+   - Add your face name to the `FACE_LIST` macro in [face-bitmaps.h](sesame-firmware-main/face-bitmaps.h).
+   - Paste the generated C array into [face-bitmaps.h](sesame-firmware-main/face-bitmaps.h) right after the last bitmap in the list.
+   - (Optional) For animations, add numbered suffixes (e.g., `_1`, `_2`) and register the FPS in the `faceFpsEntries` in [sesame-firmware-main/sesame-firmware-main.ino](sesame-firmware-main/sesame-firmware-main.ino).
 
 ### Animating Faces
 
-For an animation to be recognized by the `MAKE_FACE_FRAMES` macro, your array names in [face-bitmaps.h](face-bitmaps.h) must follow a strict naming convention:
+For an animation to be recognized by the `MAKE_FACE_FRAMES` macro, your array names in [face-bitmaps.h](sesame-firmware-main/face-bitmaps.h) must follow a strict naming convention:
 
 - **Root Frame**: `epd_bitmap_myface` (This is required and acts as frame 0).
 - **Subsequent Frames**: `epd_bitmap_myface_1`, `epd_bitmap_myface_2`, etc.
 - **Limit**: The default system supports up to 6 frames per face (Root + 5 numbered frames).
-- **Animation Modes**: Animations can be configured to play as a `LOOP` (restarts at frame 0), `ONCE` (stops on the final frame), or `BOOMERANG` (plays forward then reverses). These modes are typically defined in [movement-sequences.h](movement-sequences.h) when triggerring a pose.
+- **Animation Modes**: Animations can be configured to play as a `LOOP` (restarts at frame 0), `ONCE` (stops on the final frame), or `BOOMERANG` (plays forward then reverses). These modes are typically defined in [movement-sequences.h](sesame-firmware-main/movement-sequences.h) when triggerring a pose.
 
 ### Macro System
 

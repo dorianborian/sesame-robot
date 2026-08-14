@@ -110,7 +110,7 @@ The Companion App works with robots running the latest firmware with network mod
 [**> Go to Sesame Companion App Repository**](https://github.com/dorianborian/sesame-companion-app)
 
 ### Firmware
-The ESP32 firmware (`sesame-firmware-main.ino`) handles the kinematics, face display, and WiFi control interface.
+The ESP32 firmware (`firmware/sesame-firmware-main/sesame-firmware-main.ino`) handles the kinematics, face display, and WiFi control interface.
 *   **Web UI:** Control the robot from your phone via the built-in Access Point.
 *   **Custom Faces:** Add your own bitmaps (guide in firmware docs).
 

@@ -1,0 +1,81 @@
+[
+  {
+    "label": "Arduino: check CLI",
+    "command": "arduino-cli",
+    "args": [
+      "version"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "never",
+    "save": "none"
+  },
+  {
+    "label": "Arduino: setup ESP32 core and libraries",
+    "command": "arduino-cli core update-index --additional-urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json && arduino-cli core install esp32:esp32 --additional-urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json && arduino-cli lib install \"ESP32Servo@3.0.9\" \"Adafruit SSD1306\" \"Adafruit GFX Library\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "never",
+    "save": "none"
+  },
+  {
+    "label": "Arduino: compile Sesame (S2 Mini)",
+    "command": "arduino-cli",
+    "args": [
+      "compile",
+      "--fqbn",
+      "esp32:esp32:lolin_s2_mini",
+      "--build-path",
+      "$ZED_WORKTREE_ROOT/build/arduino-sesame-s2-mini",
+      "$ZED_WORKTREE_ROOT/firmware/sesame-firmware-main"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "never",
+    "save": "all"
+  },
+  {
+    "label": "Arduino: generate compile database (S2 Mini)",
+    "command": "/bin/sh",
+    "args": [
+      "-lc",
+      "arduino-cli compile --fqbn esp32:esp32:lolin_s2_mini --only-compilation-database --build-path \"$ZED_WORKTREE_ROOT/build/arduino-sesame-s2-mini\" \"$ZED_WORKTREE_ROOT/firmware/sesame-firmware-main\" && node \"$ZED_WORKTREE_ROOT/scripts/zed-arduino-compile-db.mjs\""
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "never",
+    "save": "all"
+  },
+  {
+    "label": "Arduino: compile Sesame (ESP32-S3 Distro V2/V3)",
+    "command": "arduino-cli",
+    "args": [
+      "compile",
+      "--fqbn",
+      "esp32:esp32:esp32s3",
+      "--build-path",
+      "$ZED_WORKTREE_ROOT/build/arduino-sesame-esp32s3",
+      "$ZED_WORKTREE_ROOT/firmware/sesame-firmware-main"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "never",
+    "save": "all"
+  },
+  {
+    "label": "Arduino: compile Sesame (ESP32 Dev Module / Distro V1)",
+    "command": "arduino-cli",
+    "args": [
+      "compile",
+      "--fqbn",
+      "esp32:esp32:esp32",
+      "--build-path",
+      "$ZED_WORKTREE_ROOT/build/arduino-sesame-esp32",
+      "$ZED_WORKTREE_ROOT/firmware/sesame-firmware-main"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "never",
+    "save": "all"
+  }
+]

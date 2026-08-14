@@ -177,7 +177,7 @@ Before dropping hardware in, trim or bundle any stray wires so nothing can flop 
 **For S2 Mini and Distro Board V1 (Legacy) Builds:**
 
 1. Inspect the harness to ensure no bare conductors can short during testing. Add heat-shrink or tape where needed.
-2. Connect a reliable USB-C cable and flash `sesame-motor-tester.ino` from the [debugging-firmware](../../firmware/debugging-firmware/) folder using Arduino IDE. If you have never flashed an ESP32 before, pause here and follow a quick tutorial so you are comfortable resetting/entering boot mode.
+2. Connect a reliable USB-C cable and flash `sesame-motor-tester.ino` from the [debugging-firmware/sesame-motor-tester](../../firmware/debugging-firmware/sesame-motor-tester/) folder using Arduino IDE. If you have never flashed an ESP32 before, pause here and follow a quick tutorial so you are comfortable resetting/entering boot mode.
 3. Open the serial monitor. You should see the tester menu.
 4. Command all motors to 90°. Starting from Motor 0, plug its connector into the appropriate header. The servo should immediately whirr into the 90° position. Repeat for Motors 1–7. Skip to Step 4 below.
 
@@ -270,7 +270,7 @@ Now we just need to do a few checks to make sure everything is working and we ca
 **Flash production firmware (For DIY / S2 Mini / Distro V1)**
 If you are using the V2 Build kit board, you can skip this step! It is pre-flashed.
 
-1. Choose the code variant from the firmware folder. Customize pin definitions if you're using a different ESP32.
+1. Choose the sketch folder from the firmware folder. Customize pin definitions if you're using a different ESP32.
 2. Use Arduino IDE to flash the full firmware bundle (motors + faces). Detailed notes live in [firmware/README.md](../../firmware/README.md).
 3. Connect to Sesame’s Wi-Fi AP, load the control page, and trigger a pose to verify everything moves as expected.
 
