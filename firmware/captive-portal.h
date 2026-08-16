@@ -420,6 +420,16 @@ const char index_html[] PROGMEM = R"rawliteral(
       background: linear-gradient(145deg, #3498db, #2980b9);
       grid-column: span 2;
     }
+    .sheet-music-textarea {
+      width: 100%;
+      height: 80px;
+      background: #222;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: monospace;
+    }
   </style>
 </head>
 <body>
@@ -510,6 +520,23 @@ const char index_html[] PROGMEM = R"rawliteral(
         <div style="display:flex;gap:10px;">
           <button class="btn-melody" style="flex:1" onclick="playCurrentMelody()">Play Again</button>
           <button class="btn-melody" style="flex:1;background:linear-gradient(145deg, #e74c3c, #c0392b);" onclick="stopBuzzer()">Stop Audio</button>
+        </div>
+      </div>
+
+      <!-- Custom Sheet Music Section -->
+      <div class="section">
+        <div class="section-title">Sheet Music</div>
+        <div class="melody-controls" style="grid-template-columns: 1fr;">
+          <select id="savedMelodies" onchange="loadSavedMelody()"></select>
+        </div>
+        <textarea id="sheetMusicInput" class="sheet-music-textarea" placeholder="e.g. G4 G4 A4 G4 C5 B4-"></textarea>
+        <div style="font-size:10px;color:#888;margin:5px 0 10px 0;">Format: NoteOctave. '-' for double duration (e.g., C4-)</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-melody" style="flex:1" onclick="playSheetMusic()">Play</button>
+          <button class="btn-melody" style="flex:1;background:linear-gradient(145deg, #f39c12, #d35400);" onclick="saveSheetMusic()">Save</button>
+        </div>
+        <div style="margin-top:10px;">
+          <button class="btn-melody" style="width:100%;background:linear-gradient(145deg, #c0392b, #a93226);" onclick="deleteSheetMusic()">Delete</button>
         </div>
       </div>
 
@@ -822,6 +849,125 @@ function stopBuzzer() {
   }).catch(console.error);
 }
 
+// --- Sheet Music Logic ---
+const NOTE_MAP = {
+  'C': 0, 'C#': 1, 'DB': 1, 'D': 2, 'D#': 3, 'EB': 3, 'E': 4,
+  'F': 5, 'F#': 6, 'GB': 6, 'G': 7, 'G#': 8, 'AB': 8, 'A': 9,
+  'A#': 10, 'BB': 10, 'B': 11
+};
+
+function parseSheetMusic(text) {
+  const tokens = text.toUpperCase().trim().split(/\s+/);
+  const sequence = [];
+  // Default 120 BPM, quarter note
+  const baseDuration = 500;
+
+  for (let token of tokens) {
+    if (!token) continue;
+
+    // Parse duration modifiers (e.g. C4- is a half note, C4-- is whole note, C4_ is eighth note)
+    let durationMultiplier = 1.0;
+    if (token.includes('-')) {
+      durationMultiplier = token.split('-').length; // C4- -> 2x, C4-- -> 3x
+      token = token.replace(/-/g, '');
+    } else if (token.includes('_')) {
+      durationMultiplier = 1.0 / (token.split('_').length); // C4_ -> 0.5x
+      token = token.replace(/_/g, '');
+    }
+
+    // Rest
+    if (token === 'R' || token === 'REST') {
+      sequence.push({f: 0, d: baseDuration * durationMultiplier, g: 0});
+      continue;
+    }
+
+    // Extract note and octave
+    const match = token.match(/^([A-G][#B]?)([0-9])$/);
+    if (match) {
+      const noteName = match[1];
+      const octave = parseInt(match[2]);
+
+      if (NOTE_MAP[noteName] !== undefined) {
+        const midiNote = (octave + 1) * 12 + NOTE_MAP[noteName];
+        const freq = midiToFreq(midiNote);
+        const totalDur = baseDuration * durationMultiplier;
+        sequence.push({
+          f: freq,
+          d: Math.round(totalDur * 0.8),
+          g: Math.round(totalDur * 0.2)
+        });
+      }
+    }
+  }
+  return sequence;
+}
+
+function playSheetMusic() {
+  const text = document.getElementById('sheetMusicInput').value;
+  currentMelodySequence = parseSheetMusic(text);
+  playCurrentMelody();
+}
+
+const DEFAULT_MELODIES = {
+  "Happy Birthday": "G4_ G4_ A4 G4 C5 B4- G4_ G4_ A4 G4 D5 C5- G4_ G4_ G5 E5 C5 B4 A4- F5_ F5_ E5 C5 D5 C5-"
+};
+
+function updateMelodyDropdown() {
+  const select = document.getElementById('savedMelodies');
+  select.innerHTML = '<option value="">-- Select a Melody --</option>';
+
+  const saved = JSON.parse(localStorage.getItem('sesameMelodies') || '{}');
+  const allMelodies = { ...DEFAULT_MELODIES, ...saved };
+
+  for (let name in allMelodies) {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    select.appendChild(opt);
+  }
+}
+
+function loadSavedMelody() {
+  const select = document.getElementById('savedMelodies');
+  if (!select.value) return;
+
+  const saved = JSON.parse(localStorage.getItem('sesameMelodies') || '{}');
+  const allMelodies = { ...DEFAULT_MELODIES, ...saved };
+
+  document.getElementById('sheetMusicInput').value = allMelodies[select.value] || "";
+}
+
+function saveSheetMusic() {
+  const name = prompt("Enter a name for this melody:");
+  if (!name) return;
+
+  const text = document.getElementById('sheetMusicInput').value.trim();
+  if (!text) {
+    alert("Sheet music is empty!");
+    return;
+  }
+
+  const saved = JSON.parse(localStorage.getItem('sesameMelodies') || '{}');
+  saved[name] = text;
+  localStorage.setItem('sesameMelodies', JSON.stringify(saved));
+  updateMelodyDropdown();
+  document.getElementById('savedMelodies').value = name;
+}
+
+function deleteSheetMusic() {
+  const name = document.getElementById('savedMelodies').value;
+  if (!name) { alert("Select a melody to delete."); return; }
+  if (DEFAULT_MELODIES[name]) { alert("Cannot delete default melodies."); return; }
+
+  if (confirm(`Delete "${name}"?`)) {
+    const saved = JSON.parse(localStorage.getItem('sesameMelodies') || '{}');
+    delete saved[name];
+    localStorage.setItem('sesameMelodies', JSON.stringify(saved));
+    updateMelodyDropdown();
+    document.getElementById('sheetMusicInput').value = '';
+  }
+}
+
 function toggleWiFiPass() {
   const passInput = document.getElementById('wifiPass');
   const btn = event.target;
@@ -990,6 +1136,7 @@ function resetWiFi() {
 document.addEventListener('DOMContentLoaded', () => {
   loadTheme();
   loadDeviceName();
+  updateMelodyDropdown();
 });
 
 function loadDeviceName() {
