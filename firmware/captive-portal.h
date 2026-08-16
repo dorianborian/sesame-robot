@@ -18,33 +18,33 @@ const char index_html[] PROGMEM = R"rawliteral(
       --content-color-darker: #cc6b29;
       --content-color-glow: rgba(255, 140, 66, 0.3);
     }
-    
+
     * {
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
     }
-    
-    body { 
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-      text-align: center; 
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      text-align: center;
       background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
-      color: #e0e0e0; 
-      touch-action: manipulation; 
+      color: #e0e0e0;
+      touch-action: manipulation;
       margin: 0;
       padding: 10px;
       overflow-x: hidden;
       box-sizing: border-box;
     }
-    
-    h2 { 
+
+    h2 {
       margin: 10px 0 20px 0;
       color: #fff;
       font-size: 32px;
       font-weight: 600;
       text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
-    
+
     /* Command Queue Status */
     .command-queue {
       font-size: 12px;
@@ -55,7 +55,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       color: #ff6b6b;
       font-weight: bold;
     }
-    
+
     /* Section Containers */
     .sections-container {
       display: flex;
@@ -64,7 +64,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       max-width: 1400px;
       margin: 0 auto;
     }
-    
+
     .section {
       background: rgba(30, 30, 30, 0.8);
       border: 1px solid #333;
@@ -76,7 +76,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       box-sizing: border-box;
     }
-    
+
     .section-title {
       font-size: 16px;
       font-weight: 600;
@@ -85,92 +85,92 @@ const char index_html[] PROGMEM = R"rawliteral(
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-    
+
     /* Button Base Styles */
-    button { 
+    button {
       background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
-      border: none; 
-      color: #e0e0e0; 
-      padding: 15px; 
-      font-size: 18px; 
-      border-radius: 12px; 
-      cursor: pointer; 
+      border: none;
+      color: #e0e0e0;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       transition: all 0.1s;
       font-weight: 500;
     }
-    button:active { 
+    button:active {
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      transform: translateY(2px); 
+      transform: translateY(2px);
     }
-    
+
     /* D-Pad Controls */
-    .dpad-container { 
-      display: flex; 
+    .dpad-container {
+      display: flex;
       flex-direction: column;
       align-items: center;
       gap: 15px;
       width: 100%;
     }
-    .dpad { 
-      display: grid; 
-      grid-template-columns: repeat(3, 1fr); 
-      grid-template-rows: repeat(2, 1fr); 
+    .dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
       gap: 12px;
       width: 100%;
       max-width: 294px;
       aspect-ratio: 3 / 2;
     }
-    .dpad button { 
-      font-size: 35px; 
-      border: 2px solid #555; 
+    .dpad button {
+      font-size: 35px;
+      border: 2px solid #555;
       color: #fff;
       width: 100%;
       height: 100%;
       min-height: 70px;
     }
-    .spacer { 
-      visibility: hidden; 
+    .spacer {
+      visibility: hidden;
     }
-    
+
     /* Pose Grid */
-    .grid { 
-      display: grid; 
-      grid-template-columns: repeat(3, 1fr); 
-      gap: 10px; 
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
-    .btn-pose { 
+    .btn-pose {
       background: linear-gradient(145deg, var(--content-color), var(--content-color-dark));
       padding: 12px 8px;
       font-size: 15px;
     }
-    .btn-pose:active { 
+    .btn-pose:active {
       background: linear-gradient(145deg, var(--content-color-dark), var(--content-color-darker));
     }
-    
+
     /* Special Buttons */
-    .btn-stop-all { 
+    .btn-stop-all {
       background: linear-gradient(145deg, #e63946, #c92a35);
-      width: 100%; 
-      font-size: 20px; 
-      padding: 18px; 
+      width: 100%;
+      font-size: 20px;
+      padding: 18px;
       box-shadow: 0 6px 12px rgba(230, 57, 70, 0.4);
       border: 2px solid #ff6b6b;
       color: #fff;
       text-transform: uppercase;
       letter-spacing: 2px;
     }
-    .btn-stop-all:active { 
+    .btn-stop-all:active {
       background: linear-gradient(145deg, #c92a35, #a8222c);
-      transform: translateY(3px); 
+      transform: translateY(3px);
     }
-    
-    .btn-settings { 
+
+    .btn-settings {
       background: linear-gradient(145deg, #555, #444);
       padding: 12px 25px;
       font-size: 16px;
     }
-    
+
     /* Motor Controls */
     .lock-indicator {
       font-size: 11px;
@@ -182,7 +182,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     .lock-indicator.active {
       display: block;
     }
-    
+
     .motor-controls {
       margin-top: 10px;
     }
@@ -231,7 +231,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       background: #666;
       cursor: not-allowed;
     }
-    
+
     /* Gamepad Status */
     .gamepad-status {
       font-size: 13px;
@@ -247,33 +247,33 @@ const char index_html[] PROGMEM = R"rawliteral(
       color: #2ecc71;
       background: rgba(46, 204, 113, 0.1);
     }
-    
+
     /* Settings Panel */
-    .settings-panel { 
-      display: none; 
-      position: fixed; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      height: 100%; 
-      background: rgba(0,0,0,0.9); 
-      z-index: 100; 
+    .settings-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 100;
       backdrop-filter: blur(8px);
       overflow-y: auto;
     }
-    .settings-content { 
+    .settings-content {
       background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
-      border: 1px solid #444; 
-      max-width: 400px; 
-      margin: 30px auto; 
-      padding: 25px; 
-      border-radius: 20px; 
-      text-align: left; 
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+      border: 1px solid #444;
+      max-width: 400px;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 20px;
+      text-align: left;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     }
-    .settings-content h3 { 
-      color: var(--content-color); 
-      margin-top: 0; 
+    .settings-content h3 {
+      color: var(--content-color);
+      margin-top: 0;
       text-align: center;
       font-size: 24px;
     }
@@ -290,40 +290,40 @@ const char index_html[] PROGMEM = R"rawliteral(
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-    .settings-content label { 
-      display: block; 
-      margin-top: 12px; 
-      font-weight: 500; 
+    .settings-content label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 500;
       color: #ccc;
       font-size: 13px;
     }
-    .settings-content input, 
-    .settings-content select { 
-      width: 100%; 
-      padding: 10px; 
-      margin-top: 5px; 
-      background: #333; 
-      color: #fff; 
-      border: 1px solid #555; 
-      border-radius: 8px; 
+    .settings-content input,
+    .settings-content select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 8px;
       box-sizing: border-box;
       font-size: 14px;
     }
-    .btn-save { 
+    .btn-save {
       background: linear-gradient(145deg, #2ecc71, #27ae60);
       box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
-      width: 100%; 
-      margin-top: 25px; 
-      color: #fff; 
+      width: 100%;
+      margin-top: 25px;
+      color: #fff;
     }
-    .btn-close { 
+    .btn-close {
       background: linear-gradient(145deg, #e74c3c, #c0392b);
       box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
-      width: 100%; 
-      margin-top: 12px; 
-      color: #fff; 
+      width: 100%;
+      margin-top: 12px;
+      color: #fff;
     }
-    
+
     /* Desktop Layout */
     @media (min-width: 1024px) {
       body {
@@ -357,13 +357,75 @@ const char index_html[] PROGMEM = R"rawliteral(
         max-width: 450px;
         margin: 0;
       }
+
+      /* Adjust container for 3 columns on desktop */
+      .sections-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 0 20px;
+      }
+    }
+
+    /* Melody Generator Styles */
+    .melody-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .melody-controls select, .melody-controls input {
+      width: 100%;
+      padding: 8px;
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 13px;
+    }
+    .melody-controls label {
+      display: block;
+      font-size: 11px;
+      color: #aaa;
+      margin-bottom: 3px;
+    }
+    .melody-viz {
+      height: 60px;
+      background: #222;
+      border-radius: 8px;
+      border: 1px solid #444;
+      margin-bottom: 15px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      padding: 5px;
+      gap: 2px;
+    }
+    .melody-bar {
+      flex: 1;
+      background: var(--content-color);
+      border-radius: 2px;
+      opacity: 0.8;
+    }
+    .btn-melody {
+      background: linear-gradient(145deg, #2ecc71, #27ae60);
+      padding: 12px;
+      font-size: 14px;
+      color: #fff;
+    }
+    .btn-melody-generate {
+      background: linear-gradient(145deg, #3498db, #2980b9);
+      grid-column: span 2;
     }
   </style>
 </head>
 <body>
   <h2 id="robotTitle">Loading...</h2>
   <div class="command-queue" id="queueStatus">Command Queue: 0/3</div>
-  
+
   <div class="sections-container">
     <div class="section-column">
       <!-- Movement Control Section -->
@@ -374,7 +436,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         <div class="spacer"></div>
         <button onmousedown="move('forward')" onmouseup="stop()" ontouchstart="move('forward')" ontouchend="stop()">&#9650;</button>
         <div class="spacer"></div>
-        
+
         <button onmousedown="move('left')" onmouseup="stop()" ontouchstart="move('left')" ontouchend="stop()">&#9664;</button>
         <button onmousedown="move('backward')" onmouseup="stop()" ontouchstart="move('backward')" ontouchend="stop()">&#9660;</button>
         <button onmousedown="move('right')" onmouseup="stop()" ontouchstart="move('right')" ontouchend="stop()">&#9654;</button>
@@ -409,6 +471,48 @@ const char index_html[] PROGMEM = R"rawliteral(
     </div>
 
     <div class="section-column">
+      <!-- Melody Generator Section -->
+      <div class="section">
+        <div class="section-title">Melody Generator</div>
+
+        <div class="melody-controls">
+          <div>
+            <label>Mood</label>
+            <select id="melodyMood">
+              <option value="cheerful">Cheerful</option>
+              <option value="mysterious">Mysterious</option>
+              <option value="energetic">Energetic</option>
+              <option value="calm">Calm</option>
+              <option value="playful">Playful</option>
+            </select>
+          </div>
+          <div>
+            <label>Length</label>
+            <select id="melodyLength">
+              <option value="short">Short</option>
+              <option value="medium" selected>Medium</option>
+              <option value="long">Long</option>
+            </select>
+          </div>
+          <div>
+            <label>BPM</label>
+            <input type="number" id="melodyBpm" min="60" max="240" value="120" step="10">
+          </div>
+          <div>
+            <label>Complexity</label>
+            <input type="range" id="melodyComplexity" min="1" max="5" value="3" style="width:100%;margin-top:8px;">
+          </div>
+          <button class="btn-melody btn-melody-generate" onclick="generateMelody()">Generate & Play</button>
+        </div>
+
+        <div class="melody-viz" id="melodyViz"></div>
+
+        <div style="display:flex;gap:10px;">
+          <button class="btn-melody" style="flex:1" onclick="playCurrentMelody()">Play Again</button>
+          <button class="btn-melody" style="flex:1;background:linear-gradient(145deg, #e74c3c, #c0392b);" onclick="stopBuzzer()">Stop Audio</button>
+        </div>
+      </div>
+
       <!-- Settings & Status Section -->
       <div class="section">
         <div class="section-title">System</div>
@@ -423,7 +527,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   <div id="settingsPanel" class="settings-panel">
     <div class="settings-content">
       <h3>Settings</h3>
-      
+
       <div class="settings-section">
         <h4>Animation Parameters</h4>
         <label>Frame Delay (ms):</label>
@@ -468,7 +572,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         <div style="font-size:11px;color:#666;margin-top:4px;">Allowed: a-z, 0-9, - (spaces/Polish chars auto-corrected)</div>
         <button onclick="saveDeviceName()" style="width:100%;padding:10px;margin-top:10px;background:#3498db;color:#fff;border:none;cursor:pointer;border-radius:8px;font-size:13px;">Save Name</button>
         <div id="deviceNameStatus" style="margin-top:8px;font-size:12px;color:#888;"></div>
-        
+
         <label style="margin-top:20px;">AP Password:</label>
         <div style="display:flex;gap:5px;">
           <input type="password" id="apPass" placeholder="Min 8 characters" minlength="8" style="flex:1;">
@@ -504,7 +608,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <div class="settings-content">
       <h3>Manual Motor Control</h3>
       <div class="lock-indicator" id="lockIndicator">Locked during animations</div>
-      
+
       <div class="settings-section">
         <div class="motor-controls">
           <div class="motor-slider">
@@ -552,6 +656,172 @@ let commandQueue = 0;
 const MAX_COMMANDS = 3;
 let motorsLocked = false;
 
+// --- Melody Generator Logic ---
+let currentMelodySequence = [];
+
+const scales = {
+  major: [0, 2, 4, 5, 7, 9, 11],
+  minor: [0, 2, 3, 5, 7, 8, 10],
+  pentatonicMajor: [0, 2, 4, 7, 9],
+  pentatonicMinor: [0, 3, 5, 7, 10],
+  dorian: [0, 2, 3, 5, 7, 9, 10]
+};
+
+const moods = {
+  cheerful: { scale: 'major', octaves: [5, 6], rootMin: 0, rootMax: 11, baseRestProb: 0.1, jumpProb: 0.3 },
+  mysterious: { scale: 'dorian', octaves: [4, 5], rootMin: 0, rootMax: 11, baseRestProb: 0.3, jumpProb: 0.4 },
+  energetic: { scale: 'pentatonicMajor', octaves: [5, 6, 7], rootMin: 0, rootMax: 11, baseRestProb: 0.05, jumpProb: 0.6 },
+  calm: { scale: 'pentatonicMinor', octaves: [4, 5], rootMin: 0, rootMax: 11, baseRestProb: 0.2, jumpProb: 0.1 },
+  playful: { scale: 'major', octaves: [5, 6, 7], rootMin: 0, rootMax: 11, baseRestProb: 0.15, jumpProb: 0.7 }
+};
+
+// Helper: Convert MIDI note to frequency
+function midiToFreq(m) {
+  return Math.round(440 * Math.pow(2, (m - 69) / 12));
+}
+
+function generateMelody() {
+  const moodName = document.getElementById('melodyMood').value;
+  const lengthName = document.getElementById('melodyLength').value;
+  const bpm = parseInt(document.getElementById('melodyBpm').value) || 120;
+  const complexity = parseInt(document.getElementById('melodyComplexity').value) || 3;
+
+  const mood = moods[moodName];
+  const scaleDef = scales[mood.scale];
+
+  // Basic length in quarter notes
+  let numBeats = lengthName === 'short' ? 4 : (lengthName === 'long' ? 16 : 8);
+
+  // Root note (random)
+  const rootNote = Math.floor(Math.random() * (mood.rootMax - mood.rootMin + 1)) + mood.rootMin;
+
+  const msPerBeat = Math.round(60000 / bpm);
+  const possibleDurations = [msPerBeat, msPerBeat / 2, msPerBeat / 4]; // Quarter, Eighth, Sixteenth
+  if (complexity < 3) possibleDurations.pop(); // Remove 16th notes for simple
+  if (complexity > 4) possibleDurations.push(msPerBeat * 1.5); // Dotted quarter
+
+  currentMelodySequence = [];
+  let currentBeat = 0;
+  let lastDegree = Math.floor(Math.random() * scaleDef.length);
+
+  // We'll generate a motif of 2-4 beats, then repeat or vary it
+  const motifLengthBeats = Math.random() > 0.5 ? 2 : 4;
+  let motif = [];
+
+  // Generate melody
+  while (currentBeat < numBeats) {
+    // Decide if we should copy the motif
+    if (currentBeat > 0 && currentBeat % motifLengthBeats === 0 && Math.random() < 0.6) {
+       // repeat motif
+       motif.forEach(n => {
+         if (currentBeat < numBeats) {
+           currentMelodySequence.push({...n});
+           currentBeat += n.beats;
+         }
+       });
+       continue;
+    }
+
+    // Generate new note
+    // Duration
+    let durationMs = possibleDurations[Math.floor(Math.random() * possibleDurations.length)];
+    let beats = durationMs / msPerBeat;
+
+    // Ensure we don't go over numBeats
+    if (currentBeat + beats > numBeats) {
+      beats = numBeats - currentBeat;
+      durationMs = beats * msPerBeat;
+    }
+
+    // Rest probability
+    let isRest = Math.random() < (mood.baseRestProb * (6 - complexity) / 3);
+
+    let f = 0;
+    if (!isRest) {
+      // Note selection
+      let degreeStep = 0;
+      if (Math.random() < mood.jumpProb) {
+        degreeStep = Math.floor(Math.random() * 5) - 2; // -2 to 2
+      } else {
+        degreeStep = Math.random() > 0.5 ? 1 : -1;
+      }
+      lastDegree = (lastDegree + degreeStep + scaleDef.length) % scaleDef.length;
+
+      let octave = mood.octaves[Math.floor(Math.random() * mood.octaves.length)];
+      let midiNote = (octave + 1) * 12 + rootNote + scaleDef[lastDegree];
+      f = midiToFreq(midiNote);
+    }
+
+    let noteObj = {
+      f: f,
+      d: Math.round(durationMs * 0.8), // 80% duty cycle
+      g: Math.round(durationMs * 0.2), // 20% gap
+      beats: beats
+    };
+
+    currentMelodySequence.push(noteObj);
+
+    if (currentBeat < motifLengthBeats) {
+      motif.push(noteObj);
+    }
+
+    currentBeat += beats;
+  }
+
+  renderMelodyViz();
+  playCurrentMelody();
+}
+
+function renderMelodyViz() {
+  const viz = document.getElementById('melodyViz');
+  viz.innerHTML = '';
+
+  let maxFreq = 0;
+  let minFreq = 10000;
+
+  currentMelodySequence.forEach(n => {
+    if (n.f > 0) {
+      if (n.f > maxFreq) maxFreq = n.f;
+      if (n.f < minFreq) minFreq = n.f;
+    }
+  });
+
+  currentMelodySequence.forEach(n => {
+    const bar = document.createElement('div');
+    bar.className = 'melody-bar';
+    bar.style.flex = n.beats;
+    if (n.f === 0) {
+      bar.style.height = '0%';
+      bar.style.background = 'transparent';
+    } else {
+      const heightPct = 20 + ((n.f - minFreq) / Math.max(1, (maxFreq - minFreq))) * 80;
+      bar.style.height = heightPct + '%';
+    }
+    viz.appendChild(bar);
+  });
+}
+
+function playCurrentMelody() {
+  if (!currentMelodySequence || currentMelodySequence.length === 0) return;
+
+  // Convert to ESP32 API format
+  const payload = currentMelodySequence.map(n => ({f: n.f, d: n.d, g: n.g}));
+
+  fetch('/api/playMelody', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).catch(console.error);
+}
+
+function stopBuzzer() {
+  fetch('/api/playMelody', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify([{f:0, d:0, g:0}])
+  }).catch(console.error);
+}
+
 function toggleWiFiPass() {
   const passInput = document.getElementById('wifiPass');
   const btn = event.target;
@@ -580,16 +850,16 @@ function saveApPassword() {
   const statusEl = document.getElementById('apPassStatus');
   const passInput = document.getElementById('apPass');
   const newPassword = passInput.value;
-  
+
   if (newPassword.length < 8) {
     statusEl.textContent = 'Password must be at least 8 characters';
     statusEl.style.color = '#e74c3c';
     return;
   }
-  
+
   statusEl.textContent = 'Saving...';
   statusEl.style.color = '#f39c12';
-  
+
   fetch('/setApPassword?password=' + encodeURIComponent(newPassword))
     .then(r => r.text())
     .then(msg => {
@@ -621,16 +891,16 @@ function saveDeviceName() {
   const statusEl = document.getElementById('deviceNameStatus');
   const inputEl = document.getElementById('deviceName');
   let originalName = inputEl.value.trim();
-  
+
   if (!originalName) {
     statusEl.textContent = 'Please enter a device name';
     statusEl.style.color = '#e74c3c';
     return;
   }
-  
+
   const validatedName = validateHostname(originalName);
   const normalizedOriginal = originalName.toLowerCase().replace(/\s+/g, '-');
-  
+
   // Only show correction if there are actual invalid characters (not just case difference)
   if (validatedName.toLowerCase() !== normalizedOriginal) {
     statusEl.textContent = 'Name corrected: ' + validatedName;
@@ -639,7 +909,7 @@ function saveDeviceName() {
     statusEl.textContent = 'Saving...';
     statusEl.style.color = '#f39c12';
   }
-  
+
   fetch('/setHostname?hostname=' + encodeURIComponent(validatedName))
     .then(r => r.text())
     .then(msg => {
@@ -658,7 +928,7 @@ function scanWiFi() {
   const selectEl = document.getElementById('wifiSSID');
   statusEl.textContent = 'Scanning...';
   statusEl.style.color = '#f39c12';
-  
+
   fetch('/scan')
     .then(r => r.json())
     .then(networks => {
@@ -682,16 +952,16 @@ function connectWiFi() {
   const ssid = document.getElementById('wifiSSID').value;
   const pass = document.getElementById('wifiPass').value;
   const statusEl = document.getElementById('wifiStatus');
-  
+
   if (!ssid) {
     statusEl.textContent = 'Please select a network';
     statusEl.style.color = '#e74c3c';
     return;
   }
-  
+
   statusEl.textContent = 'Connecting...';
   statusEl.style.color = '#f39c12';
-  
+
   fetch('/wificonnect?ssid=' + encodeURIComponent(ssid) + '&pass=' + encodeURIComponent(pass))
     .then(() => {
       statusEl.textContent = 'Saved! Rebooting...';
@@ -706,7 +976,7 @@ function connectWiFi() {
 
 function resetWiFi() {
   if (!confirm('Reset saved WiFi credentials?')) return;
-  
+
   fetch('/resetwifi')
     .then(() => {
       alert('WiFi reset. Sesame will restart in AP-only mode.');
@@ -730,10 +1000,10 @@ function loadDeviceName() {
       // sesame-green -> Sesame Green, sesame-robot -> Sesame Robot
       let friendlyName = data.hostname || 'Sesame';
       friendlyName = friendlyName.replace(/-/g, ' ');
-      friendlyName = friendlyName.split(' ').map(word => 
+      friendlyName = friendlyName.split(' ').map(word =>
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
-      
+
       document.getElementById('robotTitle').textContent = friendlyName;
       document.title = friendlyName + ' Controller';
     })
@@ -752,14 +1022,14 @@ function loadTheme() {
 function applyTheme(color) {
   const root = document.documentElement;
   root.style.setProperty('--content-color', color);
-  
+
   // Calculate darker shades
   const rgb = hexToRgb(color);
   if (rgb) {
     const dark = `rgb(${Math.max(0, rgb.r - 20)}, ${Math.max(0, rgb.g - 20)}, ${Math.max(0, rgb.b - 20)})`;
     const darker = `rgb(${Math.max(0, rgb.r - 40)}, ${Math.max(0, rgb.g - 40)}, ${Math.max(0, rgb.b - 40)})`;
     const glow = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.3)`;
-    
+
     root.style.setProperty('--content-color-dark', dark);
     root.style.setProperty('--content-color-darker', darker);
     root.style.setProperty('--content-color-glow', glow);
@@ -817,23 +1087,23 @@ function lockMotors(duration = 3000) {
   }, duration);
 }
 
-function move(dir) { 
+function move(dir) {
   if (!canSendCommand()) return;
   incrementQueue();
-  fetch('/cmd?go=' + dir).catch(console.log); 
+  fetch('/cmd?go=' + dir).catch(console.log);
 }
 
-function stop() { 
+function stop() {
   commandQueue = 0;
   updateQueueStatus();
-  fetch('/cmd?stop=1').catch(console.log); 
+  fetch('/cmd?stop=1').catch(console.log);
 }
 
-function pose(name) { 
+function pose(name) {
   if (!canSendCommand()) return;
   incrementQueue();
   lockMotors(3000);
-  fetch('/cmd?pose=' + name).catch(console.log); 
+  fetch('/cmd?pose=' + name).catch(console.log);
 }
 
 function updateMotor(motorNum, value) {
@@ -850,12 +1120,12 @@ function openSettings() {
     document.getElementById('walkCycles').value = data.walkCycles || 10;
     document.getElementById('motorCurrentDelay').value = data.motorCurrentDelay || 20;
     document.getElementById('motorSpeed').value = data.motorSpeed || 'medium';
-    
+
     // Load theme settings
     const savedColor = localStorage.getItem('themeColor') || '#ff8c42';
     const colorSelect = document.getElementById('themeColor');
     const customColorInput = document.getElementById('customColor');
-    
+
     // Check if saved color matches a preset
     let matchFound = false;
     for (let option of colorSelect.options) {
@@ -865,26 +1135,26 @@ function openSettings() {
         break;
       }
     }
-    
+
     if (!matchFound) {
       colorSelect.value = 'custom';
       customColorInput.value = savedColor;
       customColorInput.style.display = 'block';
     }
-    
+
     document.getElementById('settingsPanel').style.display = 'block';
   }).catch(() => {
     // Fallback if settings endpoint doesn't exist yet
     document.getElementById('frameDelay').value = 100;
     document.getElementById('walkCycles').value = 10;
     document.getElementById('motorCurrentDelay').value = 20;
-    
+
     const savedColor = localStorage.getItem('themeColor') || '#ff8c42';
     document.getElementById('themeColor').value = savedColor;
-    
+
     document.getElementById('settingsPanel').style.display = 'block';
   });
-  
+
   // Add event listener for theme color change
   document.getElementById('themeColor').addEventListener('change', function() {
     const customColorInput = document.getElementById('customColor');
@@ -895,14 +1165,14 @@ function openSettings() {
       applyTheme(this.value);
     }
   });
-  
+
   document.getElementById('customColor').addEventListener('input', function() {
     applyTheme(this.value);
   });
 }
 
-function closeSettings() { 
-  document.getElementById('settingsPanel').style.display = 'none'; 
+function closeSettings() {
+  document.getElementById('settingsPanel').style.display = 'none';
 }
 
 function openMotorControl() {
@@ -932,14 +1202,14 @@ function saveSettings() {
   const wc = document.getElementById('walkCycles').value;
   const mcd = document.getElementById('motorCurrentDelay').value;
   const ms = document.getElementById('motorSpeed').value;
-  
+
   // Save theme color
   const colorSelect = document.getElementById('themeColor');
   const customColorInput = document.getElementById('customColor');
   const themeColor = colorSelect.value === 'custom' ? customColorInput.value : colorSelect.value;
   localStorage.setItem('themeColor', themeColor);
   applyTheme(themeColor);
-  
+
   fetch(`/setSettings?frameDelay=${fd}&walkCycles=${wc}&motorCurrentDelay=${mcd}&motorSpeed=${ms}`)
     .then(() => closeSettings())
     .catch(() => closeSettings());

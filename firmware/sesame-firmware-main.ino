@@ -246,6 +246,7 @@ void handleSetSettings();
 void handleGetStatus();
 void handleGetServoPositions();
 void handleApiCommand();
+void handlePlayMelody();
 void updateWifiInfoScroll();
 void updateWifiInfoDisplay();
 void recordInput();
@@ -260,14 +261,14 @@ void handleCommandWeb() {
     currentCommand = server.arg("pose");
     recordInput();
     exitIdle();
-    server.send(200, "text/plain", "OK"); 
-  } 
+    server.send(200, "text/plain", "OK");
+  }
   else if (server.hasArg("go")) {
     currentCommand = server.arg("go");
     recordInput();
     exitIdle();
     server.send(200, "text/plain", "OK");
-  } 
+  }
   else if (server.hasArg("stop")) {
     currentCommand = "";
     recordInput();
@@ -322,13 +323,13 @@ void handleGetStatus() {
   json += "\"apIP\":\"" + WiFi.softAPIP().toString() + "\",";
   json += "\"apSSID\":\"" + currentAPSSID + "\",";
   json += "\"hostname\":\"" + deviceHostname + "\"";
-  
+
   if (networkConnected) {
     json += ",\"networkIP\":\"" + networkIP.toString() + "\",";
     json += "\"ssid\":\"" + WiFi.SSID() + "\",";
     json += "\"rssi\":" + String(WiFi.RSSI());
   }
-  
+
   json += "}";
   server.send(200, "application/json", json);
 }
@@ -344,30 +345,108 @@ void handleGetServoPositions() {
   server.send(200, "application/json", json);
 }
 
+void handlePlayMelody() {
+  String body = server.arg("plain");
+
+  int startIdx = body.indexOf('[');
+  int endIdx = body.lastIndexOf(']');
+  if (startIdx == -1 || endIdx == -1 || endIdx < startIdx) {
+    server.send(400, "application/json", "{\"error\":\"Invalid melody payload\"}");
+    return;
+  }
+
+  if (body.indexOf("\"f\"") == -1) {
+    server.send(400, "application/json", "{\"error\":\"Missing frequency data\"}");
+    return;
+  }
+
+  // Pre-parse validation pass
+  int checkIdx = startIdx;
+  int checkNoteCount = 0;
+  bool valid = true;
+
+  while (checkIdx < endIdx && checkNoteCount < BUZZER_QUEUE_SIZE) {
+    int fIdx = body.indexOf("\"f\":", checkIdx);
+    if (fIdx == -1 || fIdx > endIdx) {
+      if (checkNoteCount == 0 && body.indexOf("\"f\":") != -1) {
+        // Edge case: single note array or malformed trailing element, check structure
+      }
+      break;
+    }
+    int dIdx = body.indexOf("\"d\":", fIdx);
+    if (dIdx == -1 || dIdx > endIdx) {
+      valid = false;
+      break;
+    }
+    checkNoteCount++;
+    checkIdx = body.indexOf('}', fIdx) + 1;
+    if (checkIdx <= 0) break;
+  }
+
+  if (!valid || checkNoteCount == 0) {
+     server.send(400, "application/json", "{\"error\":\"Malformed or empty note data\"}");
+     return;
+  }
+
+  // Validation succeeded, clear queue and enqueue
+  clearBuzzerQueue();
+
+  int currIdx = startIdx;
+  int noteCount = 0;
+
+  while (currIdx < endIdx && noteCount < BUZZER_QUEUE_SIZE) {
+    int fIdx = body.indexOf("\"f\":", currIdx);
+    if (fIdx == -1 || fIdx > endIdx) break;
+    int dIdx = body.indexOf("\"d\":", fIdx);
+    int gIdx = body.indexOf("\"g\":", fIdx);
+    if (dIdx == -1 || dIdx > endIdx) break;
+
+    int fEnd = body.indexOf(',', fIdx);
+    if (fEnd == -1 || (body.indexOf('}', fIdx) != -1 && body.indexOf('}', fIdx) < fEnd)) fEnd = body.indexOf('}', fIdx);
+    int dEnd = body.indexOf(',', dIdx);
+    if (dEnd == -1 || (body.indexOf('}', dIdx) != -1 && body.indexOf('}', dIdx) < dEnd)) dEnd = body.indexOf('}', dIdx);
+
+    uint16_t f = body.substring(fIdx + 4, fEnd).toInt();
+    uint16_t d = body.substring(dIdx + 4, dEnd).toInt();
+    uint16_t g = 0;
+    if (gIdx != -1 && gIdx < body.indexOf('}', fIdx)) {
+      int gEnd = body.indexOf('}', gIdx);
+      g = body.substring(gIdx + 4, gEnd).toInt();
+    }
+    if (d > 5000) d = 5000;
+    if (g > 5000) g = 5000;
+    if (f > 10000) f = 10000;
+    enqueueBuzzerNote(f, d, g);
+    noteCount++;
+    currIdx = body.indexOf('}', fIdx) + 1;
+  }
+  server.send(200, "application/json", "{\"status\":\"ok\",\"notes\":" + String(noteCount) + "}");
+}
+
 // API endpoint for network clients to send commands (JSON-based)
 void handleApiCommand() {
   if (server.method() != HTTP_POST) {
     server.send(405, "application/json", "{\"error\":\"Method not allowed\"}");
     return;
   }
-  
+
   String body = server.arg("plain");
-  
+
   Serial.println("API Command received:");
   Serial.println(body);
-  
+
   // Check for face-only command (no movement)
   int faceOnlyStart = body.indexOf("\"face\":\"");
   if (faceOnlyStart == -1) {
     faceOnlyStart = body.indexOf("\"face\": \"");
   }
-  
+
   // If we have a face but no command field, it's face-only
   bool faceOnly = (faceOnlyStart > 0 && body.indexOf("\"command\":") == -1 && body.indexOf("\"command\": ") == -1);
-  
+
   String command = "";
   String face = "";
-  
+
   // Parse face
   if (faceOnlyStart > 0) {
     faceOnlyStart = body.indexOf("\"", faceOnlyStart + 6) + 1;
@@ -378,46 +457,46 @@ void handleApiCommand() {
       Serial.println(face);
     }
   }
-  
+
   // Parse command (if not face-only)
   if (!faceOnly) {
     int cmdStart = body.indexOf("\"command\":\"");
     if (cmdStart == -1) {
       cmdStart = body.indexOf("\"command\": \"");
     }
-    
+
     if (cmdStart == -1) {
       Serial.println("Error: command field not found");
       server.send(400, "application/json", "{\"error\":\"Missing command field\"}");
       return;
     }
-    
+
     cmdStart = body.indexOf("\"", cmdStart + 10) + 1;
     int cmdEnd = body.indexOf("\"", cmdStart);
-    
+
     if (cmdEnd <= cmdStart) {
       Serial.println("Error: invalid command format");
       server.send(400, "application/json", "{\"error\":\"Invalid command format\"}");
       return;
     }
-    
+
     command = body.substring(cmdStart, cmdEnd);
     Serial.print("Parsed command: ");
     Serial.println(command);
   }
-  
+
   // Set face if provided
   if (face.length() > 0) {
     setFace(face);
   }
-  
+
   // If face-only, just acknowledge
   if (faceOnly) {
     recordInput();
     server.send(200, "application/json", "{\"status\":\"ok\",\"message\":\"Face updated\"}");
     return;
   }
-  
+
   // Execute command
   if (command == "stop") {
     currentCommand = "";
@@ -435,14 +514,14 @@ void setup() {
   Serial.begin(115200);
   Serial.println("=== Sesame Robot Firmware v" FIRMWARE_VERSION " ===");
   randomSeed(micros());
-  
+
   Wire.begin(I2C_SDA, I2C_SCL);
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR)) {
     Serial.println(F("SSD1306 allocation failed."));
     while (1);
   }
-  
+
   display.clearDisplay();
   display.setTextColor(SSD1306_WHITE);
   display.setTextSize(1);
@@ -451,7 +530,7 @@ void setup() {
   display.display();
 
   WiFi.mode(WIFI_AP_STA);
-  
+
   // Load settings from Preferences BEFORE creating AP
   preferences.begin("sesame-wifi", true);
   savedSSID = preferences.getString("ssid", "");
@@ -477,19 +556,19 @@ void setup() {
   if (savedSSID.length() > 0) {
     Serial.println("[WIFI] Attempting saved connection: " + savedSSID);
     WiFi.begin(savedSSID.c_str(), savedPassword.c_str());
-    
+
     int timeout = 0;
     while (WiFi.status() != WL_CONNECTED && timeout < 20) {
       delay(500);
       Serial.print(".");
       timeout++;
     }
-    
+
     if (WiFi.status() == WL_CONNECTED) {
       networkConnected = true;
       networkIP = WiFi.localIP();
       Serial.println("\n[WIFI] Connected! IP: " + networkIP.toString());
-      
+
       if (MDNS.begin(deviceHostname.c_str())) {
         Serial.println("[mDNS] Started: http://" + deviceHostname + ".local");
         MDNS.addService("http", "tcp", 80);
@@ -529,15 +608,16 @@ void setup() {
   server.on("/api/status", handleGetStatus);
   server.on("/api/servoPositions", handleGetServoPositions);
   server.on("/api/command", handleApiCommand);
-  
+  server.on("/api/playMelody", HTTP_POST, handlePlayMelody);
+
   server.on("/scan", handleWiFiScan);
   server.on("/wificonnect", handleWiFiConnect);
   server.on("/resetwifi", handleWiFiReset);
   server.on("/setHostname", handleSetHostname);
   server.on("/setApPassword", handleSetApPassword);
-  
+
   server.onNotFound(handleRoot);
-  
+
   ElegantOTA.begin(&server);
   server.begin();
 
@@ -545,21 +625,21 @@ void setup() {
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
-  
+
   for (int i = 0; i < 8; i++) {
     servos[i].setPeriodHertz(50);
     servos[i].attach(servoPins[i], 732, 2929);
   }
   delay(10);
   setupBuzzer();
-  
+
   pinMode(TOP_TOUCH_PIN, INPUT);
   pinMode(LEFT_TOUCH_PIN, INPUT);
   pinMode(RIGHT_TOUCH_PIN, INPUT);
 
-  
+
   setFace("rest");
-  
+
   Serial.println(F("=== System Ready ==="));
 }
 
@@ -572,10 +652,10 @@ void loop() {
   updateIdleBlink();
   updateWifiInfoScroll();
   updateBuzzer();
-  
+
   // Touch sensor handling - wiggle animation
   bool touchState = digitalRead(TOP_TOUCH_PIN);
-  
+
   if (touchState && !lastTouchState) {
     if (currentCommand == "wiggle" && wiggleRunoutCount > 0) {
       wiggleRunoutCount = 0;
@@ -594,12 +674,12 @@ void loop() {
       delayWithFace(200);
     }
   }
-  
+
   if (!touchState && lastTouchState) {
     wiggleRunoutCount = 4;
     touchWiggleActive = false;
   }
-  
+
   lastTouchState = touchState;
 
   bool leftTouch = digitalRead(LEFT_TOUCH_PIN);
@@ -693,7 +773,7 @@ void loop() {
       }
     }
   }
-  
+
   // Serial CLI for debugging (can be used to diagnose servo position issues and wiring)
   if (Serial.available()) {
     static char command_buffer[32];
@@ -952,7 +1032,7 @@ void updateIdleBlink() {
 }
 
 // ====== HELPERS ======
-void setServoAngle(uint8_t channel, int angle) { 
+void setServoAngle(uint8_t channel, int angle) {
   if (channel < 8) {
     int adjustedAngle = constrain(angle + servoSubtrim[channel], 0, 180);
     servos[channel].write(adjustedAngle);
@@ -989,14 +1069,14 @@ void recordInput() {
 
 void updateWifiInfoScroll() {
   unsigned long now = millis();
-  
+
   // If not showing WiFi info, check if we should start (after 30s idle)
   if (!showingWifiInfo && (now - lastInputTime >= 30000)) {
     showingWifiInfo = true;
     wifiScrollPos = 0;
     lastWifiScrollMs = now;
   }
-  
+
   // If WiFi info is active, check if we should stop (after 30s of activity)
   if (showingWifiInfo && firstInputReceived && (now - lastInputTime < 30000)) {
     showingWifiInfo = false;
@@ -1006,24 +1086,24 @@ void updateWifiInfoScroll() {
     }
     return;
   }
-  
+
   if (!showingWifiInfo) return;
-  
+
   // Update scroll every 150ms
   if (now - lastWifiScrollMs >= 150) {
     lastWifiScrollMs = now;
-    
+
     // Clear and redraw with current face in background
     display.clearDisplay();
-    
+
     // Draw the face bitmap in the background
     if (currentFaceFrames != nullptr && currentFaceFrameCount > 0) {
       display.drawBitmap(0, 0, currentFaceFrames[currentFaceFrameIndex], 128, 64, SSD1306_WHITE);
     }
-    
+
     // Draw black bar for text background on top row
     display.fillRect(0, 0, 128, 10, SSD1306_BLACK);
-    
+
     // Draw scrolling text
     display.setTextSize(1);
     display.setTextColor(SSD1306_WHITE);
@@ -1031,9 +1111,9 @@ void updateWifiInfoScroll() {
     display.setCursor(-wifiScrollPos, 1);
     display.print(wifiInfoText);
     display.setTextWrap(true);
-    
+
     display.display();
-    
+
     // Advance scroll position
     wifiScrollPos += 2;
     if (wifiScrollPos >= (int)(wifiInfoText.length() * 6)) {
@@ -1044,7 +1124,7 @@ void updateWifiInfoScroll() {
 
 void checkWiFiStatus() {
   int currentStatus = WiFi.status();
-  
+
   // Check if we just connected to WiFi
   if (currentStatus == WL_CONNECTED && !networkConnected) {
     networkConnected = true;
@@ -1052,7 +1132,7 @@ void checkWiFiStatus() {
     Serial.println("[WIFI] Status: CONNECTED | IP: " + networkIP.toString());
     updateWifiInfoText();
     updateWifiInfoDisplay(); // Force refresh display
-    
+
     if (!MDNS.begin(deviceHostname.c_str())) {
       Serial.println("[mDNS] Error starting");
     } else {
@@ -1066,7 +1146,7 @@ void checkWiFiStatus() {
     updateWifiInfoText();
     updateWifiInfoDisplay(); // Force refresh display
   }
-  
+
   lastWifiStatus = currentStatus;
 }
 
@@ -1081,10 +1161,10 @@ void updateWifiInfoDisplay() {
 void updateWifiInfoText() {
   IPAddress apIP = WiFi.softAPIP();
   if (networkConnected) {
-    wifiInfoText = "AP: " + currentAPSSID + " (" + apIP.toString() + ")  |  Network: " + 
+    wifiInfoText = "AP: " + currentAPSSID + " (" + apIP.toString() + ")  |  Network: " +
                    WiFi.SSID() + " (" + networkIP.toString() + ") or " + deviceHostname + ".local  |  ";
   } else {
-    wifiInfoText = "WiFi: " + currentAPSSID + " | Pass: " + currentAPPass + " | IP: " + 
+    wifiInfoText = "WiFi: " + currentAPSSID + " | Pass: " + currentAPPass + " | IP: " +
                    apIP.toString() + " | http://" + deviceHostname + ".local  |  ";
   }
 }
@@ -1109,17 +1189,17 @@ void handleWiFiConnect() {
     server.send(400, "text/plain", "Missing ssid or pass");
     return;
   }
-  
+
   String newSSID = server.arg("ssid");
   String newPass = server.arg("pass");
-  
+
   Serial.println("[WIFI] Saving new credentials: " + newSSID);
-  
+
   preferences.begin("sesame-wifi", false);
   preferences.putString("ssid", newSSID);
   preferences.putString("pass", newPass);
   preferences.end();
-  
+
   server.send(200, "text/plain", "Rebooting to connect...");
   delay(500);
   ESP.restart();
@@ -1130,7 +1210,7 @@ void handleWiFiReset() {
   preferences.begin("sesame-wifi", false);
   preferences.clear();
   preferences.end();
-  
+
   server.send(200, "text/plain", "WiFi credentials cleared. Rebooting...");
   delay(500);
   ESP.restart();
@@ -1141,13 +1221,13 @@ void handleSetHostname() {
     server.send(400, "text/plain", "Missing hostname parameter");
     return;
   }
-  
+
   String newHostname = server.arg("hostname");
-  
+
   // Validate hostname (lowercase, no spaces)
   newHostname.trim();
   newHostname.toLowerCase();
-  
+
   // Remove invalid characters
   for (int i = newHostname.length() - 1; i >= 0; i--) {
     char c = newHostname.charAt(i);
@@ -1155,15 +1235,15 @@ void handleSetHostname() {
       newHostname.remove(i, 1);
     }
   }
-  
+
   // Remove hyphens at start/end
   while (newHostname.startsWith("-")) newHostname.remove(0, 1);
   while (newHostname.endsWith("-")) newHostname.remove(newHostname.length() - 1, 1);
-  
+
   if (newHostname.length() == 0) {
     newHostname = DEFAULT_HOSTNAME;
   }
-  
+
   // Create friendly display name from hostname (sesame-green -> Sesame Green)
   String friendlyName = newHostname;
   friendlyName.replace("-", " ");
@@ -1176,18 +1256,18 @@ void handleSetHostname() {
       }
     }
   }
-  
+
   // Create AP SSID from friendly name
   String newAPSSID = friendlyName + " AP";
-  
+
   Serial.println("[HOSTNAME] Saving: " + newHostname);
   Serial.println("[HOSTNAME] AP SSID: " + newAPSSID);
-  
+
   preferences.begin("sesame-wifi", false);
   preferences.putString("hostname", newHostname);
   preferences.putString("apssid", newAPSSID);
   preferences.end();
-  
+
   server.send(200, "text/plain", "Saved: " + friendlyName + ". Rebooting...");
   delay(500);
   ESP.restart();
@@ -1198,20 +1278,20 @@ void handleSetApPassword() {
     server.send(400, "text/plain", "Missing password parameter");
     return;
   }
-  
+
   String newPassword = server.arg("password");
-  
+
   if (newPassword.length() < 8) {
     server.send(400, "text/plain", "Password must be at least 8 characters");
     return;
   }
-  
+
   Serial.println("[AP] Saving new password");
-  
+
   preferences.begin("sesame-wifi", false);
   preferences.putString("appass", newPassword);
   preferences.end();
-  
+
   server.send(200, "text/plain", "AP password saved. Rebooting...");
   delay(500);
   ESP.restart();

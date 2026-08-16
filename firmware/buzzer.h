@@ -6,7 +6,7 @@
 // GPIO 5 drives the 2N2222 base. RMT is separate from the LEDC timers used
 // by the eight servos, avoiding the timer conflict seen with tone()/LEDC.
 constexpr uint8_t BUZZER_PIN = 5;
-constexpr uint8_t BUZZER_QUEUE_SIZE = 32;
+constexpr uint16_t BUZZER_QUEUE_SIZE = 256;
 
 struct BuzzerNote { uint16_t frequency; uint16_t durationMs; uint16_t gapMs; };
 enum BuzzerCue : uint8_t {
@@ -20,14 +20,23 @@ enum BuzzerCue : uint8_t {
 };
 
 static BuzzerNote buzzerQueue[BUZZER_QUEUE_SIZE];
-static uint8_t buzzerQueueHead = 0, buzzerQueueTail = 0;
+static uint16_t buzzerQueueHead = 0, buzzerQueueTail = 0;
 static bool buzzerReady = false, buzzerToneActive = false, buzzerGapActive = false;
 static unsigned long buzzerDeadlineMs = 0;
 static uint16_t buzzerCurrentGapMs = 0;
 static rmt_data_t buzzerWave[1];
 
+inline void clearBuzzerQueue() {
+  buzzerQueueHead = 0;
+  buzzerQueueTail = 0;
+  buzzerToneActive = false;
+  buzzerGapActive = false;
+  rmtWriteLooping(BUZZER_PIN, nullptr, 0);
+  digitalWrite(BUZZER_PIN, LOW);
+}
+
 inline bool enqueueBuzzerNote(uint16_t frequency, uint16_t durationMs, uint16_t gapMs = 0) {
-  const uint8_t nextTail = (buzzerQueueTail + 1) % BUZZER_QUEUE_SIZE;
+  const uint16_t nextTail = (buzzerQueueTail + 1) % BUZZER_QUEUE_SIZE;
   if (nextTail == buzzerQueueHead) return false;
   buzzerQueue[buzzerQueueTail] = { frequency, durationMs, gapMs };
   buzzerQueueTail = nextTail;
