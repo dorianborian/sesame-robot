@@ -343,7 +343,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         flex-direction: row;
         justify-content: center;
         align-items: flex-start;
-        gap: 50px;
+        gap: 20px;
         padding: 0 20px;
       }
       .section-column {
@@ -356,15 +356,6 @@ const char index_html[] PROGMEM = R"rawliteral(
         width: 100%;
         max-width: 450px;
         margin: 0;
-      }
-
-      /* Adjust container for 3 columns on desktop */
-      .sections-container {
-        flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
-        gap: 20px;
-        padding: 0 20px;
       }
     }
 
@@ -438,6 +429,23 @@ const char index_html[] PROGMEM = R"rawliteral(
 
   <div class="sections-container">
     <div class="section-column">
+      <!-- Custom Sheet Music Section -->
+      <div class="section">
+        <div class="section-title">Sheet Music</div>
+        <div class="melody-controls" style="grid-template-columns: 1fr;">
+          <select id="savedMelodies" onchange="loadSavedMelody()"></select>
+        </div>
+        <textarea id="sheetMusicInput" class="sheet-music-textarea" placeholder="e.g. G4 G4 A4 G4 C5 B4-"></textarea>
+        <div style="font-size:10px;color:#888;margin:5px 0 10px 0;">Format: NoteOctave. '-' for double duration (e.g., C4-)</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-melody" style="flex:1" onclick="playSheetMusic()">Play</button>
+          <button class="btn-melody" style="flex:1;background:linear-gradient(145deg, #f39c12, #d35400);" onclick="saveSheetMusic()">Save</button>
+        </div>
+        <div style="margin-top:10px;">
+          <button class="btn-melody" style="width:100%;background:linear-gradient(145deg, #c0392b, #a93226);" onclick="deleteSheetMusic()">Delete</button>
+        </div>
+      </div>
+
       <!-- Movement Control Section -->
       <div class="section">
     <div class="section-title">Movement Control</div>
@@ -520,23 +528,6 @@ const char index_html[] PROGMEM = R"rawliteral(
         <div style="display:flex;gap:10px;">
           <button class="btn-melody" style="flex:1" onclick="playCurrentMelody()">Play Again</button>
           <button class="btn-melody" style="flex:1;background:linear-gradient(145deg, #e74c3c, #c0392b);" onclick="stopBuzzer()">Stop Audio</button>
-        </div>
-      </div>
-
-      <!-- Custom Sheet Music Section -->
-      <div class="section">
-        <div class="section-title">Sheet Music</div>
-        <div class="melody-controls" style="grid-template-columns: 1fr;">
-          <select id="savedMelodies" onchange="loadSavedMelody()"></select>
-        </div>
-        <textarea id="sheetMusicInput" class="sheet-music-textarea" placeholder="e.g. G4 G4 A4 G4 C5 B4-"></textarea>
-        <div style="font-size:10px;color:#888;margin:5px 0 10px 0;">Format: NoteOctave. '-' for double duration (e.g., C4-)</div>
-        <div style="display:flex;gap:10px;">
-          <button class="btn-melody" style="flex:1" onclick="playSheetMusic()">Play</button>
-          <button class="btn-melody" style="flex:1;background:linear-gradient(145deg, #f39c12, #d35400);" onclick="saveSheetMusic()">Save</button>
-        </div>
-        <div style="margin-top:10px;">
-          <button class="btn-melody" style="width:100%;background:linear-gradient(145deg, #c0392b, #a93226);" onclick="deleteSheetMusic()">Delete</button>
         </div>
       </div>
 
