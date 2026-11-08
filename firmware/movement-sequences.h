@@ -323,107 +323,175 @@ inline void runCrabPose() {
 }
 
 // --- MOVEMENT ANIMATIONS ---
+// --- REMASTERED MOVEMENT BY @SAIREOUS ---
+
 inline void runWalkPose() {
-  Serial.println(F("WALK FWD"));
-  setFaceWithMode("walk", FACE_ANIM_ONCE);
-  // Initial Step
-  setServoAngle(R3, 135); setServoAngle(L3, 45);
-  setServoAngle(R2, 100); setServoAngle(L1, 25);
+  Serial.println(F("WALK FWD ALIVE FAST V5"));
+  setFaceWithMode("walk", FACE_ANIM_LOOP);
+
   if (!pressingCheck("forward", frameDelay)) return;
-  
-  for (int i = 0; i < walkCycles; i++) {
-    setServoAngle(R3, 135); setServoAngle(L3, 0);
+
+  setServoAngle(R3, 143);
+  setServoAngle(L4, 148);
+  if (!pressingCheck("forward", frameDelay)) return;
+
+  while (currentCommand == "forward") {
+    // A swings forward while grounded B pushes the body forward.
+    // Front legs use a slightly longer stride than rear legs.
+    setServoAngle(R1, 170);
+    setServoAngle(L2, 106);
+    setServoAngle(L1, 78);
+    setServoAngle(R2, 18);
     if (!pressingCheck("forward", frameDelay)) return;
-    setServoAngle(L4, 135); setServoAngle(L2, 90);
-    setServoAngle(R4, 0); setServoAngle(R1, 180);
-    if (!pressingCheck("forward", frameDelay)) return;    
-    setServoAngle(R2, 45); setServoAngle(L1, 90);
+
+    // Soft, simultaneous support exchange: A lands while B lifts.
+    setServoAngle(R3, 171);
+    setServoAngle(L4, 176);
+    setServoAngle(L3, 38);
+    setServoAngle(R4, 42);
     if (!pressingCheck("forward", frameDelay)) return;
-    setServoAngle(R4, 45); setServoAngle(L4, 180);
+
+    // B swings forward while grounded A pushes the body forward.
+    setServoAngle(L1, 10);
+    setServoAngle(R2, 76);
+    setServoAngle(R1, 102);
+    setServoAngle(L2, 164);
     if (!pressingCheck("forward", frameDelay)) return;
-    setServoAngle(R3, 180); setServoAngle(L3, 45);
-    setServoAngle(R2, 90); setServoAngle(L1, 0);
-    if (!pressingCheck("forward", frameDelay)) return;  
-    setServoAngle(L2, 135); setServoAngle(R1, 90);
+
+    // B lands while A lifts. The next cycle continues immediately without
+    // returning to the rigid stand pose.
+    setServoAngle(L3, 10);
+    setServoAngle(R4, 14);
+    setServoAngle(R3, 143);
+    setServoAngle(L4, 148);
     if (!pressingCheck("forward", frameDelay)) return;
   }
+
   runStandPose(1);
 }
 
-// Logic reversed from Walk
 inline void runWalkBackward() {
-  Serial.println(F("WALK BACK"));
-  setFaceWithMode("walk", FACE_ANIM_ONCE);
+  Serial.println(F("WALK BACK ALIVE FAST V5"));
+  setFaceWithMode("walk", FACE_ANIM_LOOP);
+
   if (!pressingCheck("backward", frameDelay)) return;
-  
-  for (int i = 0; i < walkCycles; i++) {
-    setServoAngle(R3, 135); setServoAngle(L3, 0);
+
+  setServoAngle(R3, 143);
+  setServoAngle(L4, 148);
+  if (!pressingCheck("backward", frameDelay)) return;
+
+  while (currentCommand == "backward") {
+    // A swings backward while grounded B pushes the body backward.
+    setServoAngle(R1, 102);
+    setServoAngle(L2, 164);
+    setServoAngle(L1, 10);
+    setServoAngle(R2, 76);
     if (!pressingCheck("backward", frameDelay)) return;
-    setServoAngle(L4, 135); setServoAngle(L2, 135);
-    setServoAngle(R4, 0); setServoAngle(R1, 90);
-    if (!pressingCheck("backward", frameDelay)) return;    
-    setServoAngle(R2, 90); setServoAngle(L1, 0);
+
+    // A lands while B lifts.
+    setServoAngle(R3, 171);
+    setServoAngle(L4, 176);
+    setServoAngle(L3, 38);
+    setServoAngle(R4, 42);
     if (!pressingCheck("backward", frameDelay)) return;
-    setServoAngle(R4, 45); setServoAngle(L4, 180);
+
+    // B swings backward while grounded A pushes the body backward.
+    setServoAngle(L1, 78);
+    setServoAngle(R2, 18);
+    setServoAngle(R1, 170);
+    setServoAngle(L2, 106);
     if (!pressingCheck("backward", frameDelay)) return;
-    setServoAngle(R3, 180); setServoAngle(L3, 45);
-    setServoAngle(R2, 45); setServoAngle(L1, 90);
-    if (!pressingCheck("backward", frameDelay)) return;  
-    setServoAngle(L2, 90); setServoAngle(R1, 180);
+
+    // B lands while A lifts for the next uninterrupted cycle.
+    setServoAngle(L3, 10);
+    setServoAngle(R4, 14);
+    setServoAngle(R3, 143);
+    setServoAngle(L4, 148);
     if (!pressingCheck("backward", frameDelay)) return;
   }
+
   runStandPose(1);
 }
 
-// Simple turn logic
 inline void runTurnLeft() {
-  Serial.println(F("TURN LEFT"));
-  setFaceWithMode("walk", FACE_ANIM_ONCE);
-  for (int i = 0; i < walkCycles; i++) {
-    //legset 1 (R1 L2)
-    setServoAngle(R3, 135); setServoAngle(L4, 135); 
+  Serial.println(F("TURN LEFT IN PLACE FAST V5"));
+  setFaceWithMode("walk", FACE_ANIM_LOOP);
+
+  if (!pressingCheck("left", frameDelay)) return;
+
+  setServoAngle(R3, 143);
+  setServoAngle(L4, 148);
+  if (!pressingCheck("left", frameDelay)) return;
+
+  while (currentCommand == "left") {
+    // Lifted A resets for a left turn. Grounded B twists the body left:
+    // the right side pushes forward and the left side pushes backward.
+    setServoAngle(R1, 166);
+    setServoAngle(L2, 160);
+    setServoAngle(L1, 12);
+    setServoAngle(R2, 18);
     if (!pressingCheck("left", frameDelay)) return;
-    setServoAngle(R1, 180); setServoAngle(L2, 180); 
+
+    // A lands and B lifts without pausing the rhythm.
+    setServoAngle(R3, 171);
+    setServoAngle(L4, 176);
+    setServoAngle(L3, 38);
+    setServoAngle(R4, 42);
     if (!pressingCheck("left", frameDelay)) return;
-    setServoAngle(R3, 180); setServoAngle(L4, 180); 
+
+    // Lifted B resets; grounded A completes the same leftward twist.
+    setServoAngle(L1, 78);
+    setServoAngle(R2, 76);
+    setServoAngle(R1, 102);
+    setServoAngle(L2, 106);
     if (!pressingCheck("left", frameDelay)) return;
-    setServoAngle(R1, 135); setServoAngle(L2, 135);
+
+    setServoAngle(L3, 10);
+    setServoAngle(R4, 14);
+    setServoAngle(R3, 143);
+    setServoAngle(L4, 148);
     if (!pressingCheck("left", frameDelay)) return;
-      //legset 2 (R2 L1)
-    setServoAngle(R4, 45); setServoAngle(L3, 45); 
-    if (!pressingCheck("left", frameDelay)) return;
-    setServoAngle(R2, 90); setServoAngle(L1, 90); 
-    if (!pressingCheck("left", frameDelay)) return;
-    setServoAngle(R4, 0); setServoAngle(L3, 0); 
-    if (!pressingCheck("left", frameDelay)) return;
-    setServoAngle(R2, 45); setServoAngle(L1, 45);
-    if (!pressingCheck("left", frameDelay)) return;  
   }
+
   runStandPose(1);
 }
 
 inline void runTurnRight() {
-  Serial.println(F("TURN RIGHT"));
-  setFaceWithMode("walk", FACE_ANIM_ONCE);
-  for (int i = 0; i < walkCycles; i++) {
-    //legset 2 (R2 L1)
-    setServoAngle(R4, 45); setServoAngle(L3, 45); 
+  Serial.println(F("TURN RIGHT IN PLACE FAST V5"));
+  setFaceWithMode("walk", FACE_ANIM_LOOP);
+  if (!pressingCheck("right", frameDelay)) return;
+
+  setServoAngle(R3, 143);
+  setServoAngle(L4, 148);
+  if (!pressingCheck("right", frameDelay)) return;
+
+  while (currentCommand == "right") {
+    // Exact opposite of the left turn: grounded B twists the body right.
+    setServoAngle(R1, 102);
+    setServoAngle(L2, 106);
+    setServoAngle(L1, 78);
+    setServoAngle(R2, 76);
     if (!pressingCheck("right", frameDelay)) return;
-    setServoAngle(R2, 0); setServoAngle(L1, 0); 
+
+    setServoAngle(R3, 171);
+    setServoAngle(L4, 176);
+    setServoAngle(L3, 38);
+    setServoAngle(R4, 42);
     if (!pressingCheck("right", frameDelay)) return;
-    setServoAngle(R4, 0); setServoAngle(L3, 0); 
+
+    // Grounded A completes the rightward twist while B resets.
+    setServoAngle(L1, 10);
+    setServoAngle(R2, 18);
+    setServoAngle(R1, 170);
+    setServoAngle(L2, 164);
     if (!pressingCheck("right", frameDelay)) return;
-    setServoAngle(R2, 45); setServoAngle(L1, 45);
-    if (!pressingCheck("right", frameDelay)) return;  
-    //legset 1 (R1 L2)
-    setServoAngle(R3, 135); setServoAngle(L4, 135); 
-    if (!pressingCheck("right", frameDelay)) return;
-    setServoAngle(R1, 90); setServoAngle(L2, 90); 
-    if (!pressingCheck("right", frameDelay)) return;
-    setServoAngle(R3, 180); setServoAngle(L4, 180); 
-    if (!pressingCheck("right", frameDelay)) return;
-    setServoAngle(R1, 135); setServoAngle(L2, 135);
+
+    setServoAngle(L3, 10);
+    setServoAngle(R4, 14);
+    setServoAngle(R3, 143);
+    setServoAngle(L4, 148);
     if (!pressingCheck("right", frameDelay)) return;
   }
+
   runStandPose(1);
 }
