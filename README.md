@@ -7,7 +7,7 @@ ___
 ![GitHub stars](https://img.shields.io/github/stars/dorianborian/sesame-robot?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/dorianborian/sesame-robot?style=social)
 
-<img width="100%" height="728" alt="sesame-cover" src="https://github.com/user-attachments/assets/f0cc6ad0-135b-4515-8750-900f224ed7ae" />
+<img width="100%" alt="sesame-cover" src="docs/images/sesame-cover.gif" />
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=NIgoQVQF_Ng">
@@ -75,7 +75,7 @@ Upload the code from the **[Firmware Directory](firmware/README.md)**.
 ### 5. Create Animations 
 Use **[Sesame Studio](https://github.com/dorianborian/sesame-studio)** to visually design poses and sequences for your robot.
 
-<img width="100%" height="728" alt="sesame-wakeup-gif" src="https://github.com/user-attachments/assets/a4951195-4253-40a4-a87d-d14fad57ff5f" />
+<img width="100%" alt="sesame-animations-gif" src="docs/images/sesame-animations.gif" />
 
 ---
 
@@ -88,6 +88,8 @@ Sesame Studio is a desktop application for designing animations, sequencing pose
 *   Design 128x64 OLED face bitmaps or directly open, edit, and save Arduino `face-bitmaps.h` files.
 *   Generate C++ code for servo angles and bitmaps ready to paste into firmware.
 
+<img width="80%" alt="sesame-studio-preview" src="docs/images/preview-sesame-studio.png" />
+
 [**> Go to Sesame Studio Repository**](https://github.com/dorianborian/sesame-studio)
 
 
@@ -97,6 +99,8 @@ The Sesame Simulator, created by Jay Li, is a Rust-based 3D simulation environme
 *   **Web-based Interface:** Run the simulator directly in your browser.
 *   **URDF Integration:** Accurate modeling of Sesame's physical properties.
 
+<img width="80%" alt="sesame-simulator-preview" src="docs/images/preview-sesame-simulator.png" />
+
 [**> Go to Sesame Simulator**](https://one-for-all.github.io/sesame-robot-sim/)
 
 ### Sesame ML Tools
@@ -105,7 +109,7 @@ ML tools Created by Luke Hollis for Sesame, world model for online planning, pol
 *   **Tasks:** Stand, challenged recovery, commanded locomotion, and goal/obstacle navigation
 *   **Policy evaluation:** Multi-seed JSON/CSV reports, strict task success, domain parameters, tracking/fall/collision/energy/latency metrics, MP4/GIF and onboard/split views
 
-<img width="25%" alt="sesame-ml" src="https://github.com/user-attachments/assets/2b55edea-d5a0-45fc-92ef-570c75713114" />
+<img width="80%" alt="sesame-ml-preview" src="docs/images/preview-sesame-ml.gif" />
 
 [**> Go to Sesame ML Repo**](https://github.com/lukehollis/sesame-ml)
 
@@ -118,12 +122,16 @@ The Sesame Companion App is a Python-based application that enables advanced con
 
 The Companion App works with robots running the latest firmware with network mode enabled.
 
+<img width="80%" alt="sesame-companion-preview" src="docs/images/preview-companion-app.png" />
+
 [**> Go to Sesame Companion App Repository**](https://github.com/dorianborian/sesame-companion-app)
 
 ### Firmware
 The ESP32 firmware (`sesame-firmware-main.ino`) handles the kinematics, face display, and WiFi control interface.
 *   **Web UI:** Control the robot from your phone via the built-in Access Point.
 *   **Custom Faces:** Add your own bitmaps (guide in firmware docs).
+
+<img width="80%" alt="sesame-firmware-preview" src="docs/images/preview-firmware.png" />
 
 [**> Go to Firmware Docs**](firmware/README.md)
 
@@ -139,6 +147,8 @@ This robot is a platform for building new features, cosmetics, tools, and ideas.
 *   Sensor integration (Ultrasonic, Gyro, etc.)
 
 I would also love to see forks of this project with new hardware, software, faces, etc. Be sure to send me a message if you end up building one, and I might feature you on my website or channel!
+
+<img width="100%" alt="sesame-squad-gif" src="docs/images/sesame-squad.gif" />
   
 ---
 

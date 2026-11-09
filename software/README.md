@@ -1,6 +1,6 @@
 # Software
 
-Software applications for making the most of your Sesame Robot.
+Software applications and simulation tools for making the most of your Sesame Robot.
 
 ## Tools
 
@@ -14,9 +14,39 @@ A PySide6-based animation, pose sequencing, and OLED face design tool.
 
 **Note:** Sesame Studio is maintained in its own dedicated repository at [https://github.com/dorianborian/sesame-studio](https://github.com/dorianborian/sesame-studio).
 
+<img width="80%" alt="sesame-studio-preview" src="../docs/images/preview-sesame-studio.png" />
+
 [Go to Sesame Studio Repository ->](https://github.com/dorianborian/sesame-studio)
 
-### Sesame Companion App
+---
+
+### [Sesame Simulator](https://one-for-all.github.io/sesame-robot-sim/)
+A Rust-based 3D simulation environment created by Jay Li for testing Sesame's movements and kinematics directly in your browser.
+
+- **Physics-based Simulation**: Test walking and balance without hardware.
+- **Web-based Interface**: Edit firmware sequences and run the simulator directly in your browser.
+- **URDF Integration**: Accurate modeling of Sesame's physical properties.
+
+<img width="80%" alt="sesame-simulator-preview" src="../docs/images/preview-sesame-simulator.png" />
+
+[Go to Sesame Simulator ->](https://one-for-all.github.io/sesame-robot-sim/)
+
+---
+
+### [Sesame ML Tools](https://github.com/lukehollis/sesame-ml)
+ML tools created by Luke Hollis for Sesame, providing a world model for online planning, policy evaluation, and RL fine-tuning.
+
+- **Robot Description**: Self-contained printable STLs, CAD-derived MJCF, validated URDF, camera/IMU/foot frames, primitive contact geometry, masses, and actuator limits.
+- **Tasks**: Stand, challenged recovery, commanded locomotion, and goal/obstacle navigation.
+- **Policy Evaluation**: Multi-seed JSON/CSV reports, strict task success, domain parameters, tracking/fall/collision/energy/latency metrics, MP4/GIF, and onboard/split views.
+
+<img width="80%" alt="sesame-ml-preview" src="../docs/images/preview-sesame-ml.gif" />
+
+[Go to Sesame ML Repository ->](https://github.com/lukehollis/sesame-ml)
+
+---
+
+### [Sesame Companion App](https://github.com/dorianborian/sesame-companion-app)
 A Python application for advanced robot control and interaction over your local network.
 
 - **Voice Control**: Integrate with speech recognition for voice commands.
@@ -27,6 +57,6 @@ A Python application for advanced robot control and interaction over your local 
 
 **Note:** The Companion App is a separate repository and requires the latest firmware with network mode enabled.
 
+<img width="80%" alt="sesame-companion-preview" src="../docs/images/preview-companion-app.png" />
+
 [Go to Sesame Companion App Repository ->](https://github.com/dorianborian/sesame-companion-app)
-
-

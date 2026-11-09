@@ -5,6 +5,8 @@ This document provides technical information on the firmware architecture, contr
 > [!NOTE]
 > The firmware is now organized into a modular structure with a main entry point and specialized header files for bitmaps, movement, and web assets. This makes customization much easier and the codebase cleaner.
 
+<img width="80%" alt="sesame-firmware-preview" src="../docs/images/preview-firmware.png" />
+
 ## Table of Contents
 
 - [How to Flash the Firmware](#how-to-flash-the-firmware)
