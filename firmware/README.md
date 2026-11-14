@@ -1,3 +1,4 @@
+<!-- Modified by BotInfo.ai, 2026-11-14: documented the motion timeout. -->
 # Sesame Robot Firmware
 
 This document provides technical information on the firmware architecture, control logic, and hardware abstraction layers used in the Sesame Robot.
@@ -311,9 +312,11 @@ GET /cmd?motor=1&value=90
 
 ```http
 GET /getSettings
-# Returns: {"frameDelay":100,"walkCycles":10,"motorCurrentDelay":20,"faceFps":8}
+# Returns: {"frameDelay":100,"walkCycles":10,"motorCurrentDelay":20,"faceFps":8,"motionTimeout":3000}
 
 GET /setSettings?frameDelay=120&walkCycles=15&motorCurrentDelay=25&faceFps=10
+GET /setSettings?motionTimeout=5000
+# motionTimeout: ms, 500-60000, see Motion Timeout below
 ```
 
 ### JSON API (Recommended for Network Clients)
@@ -392,11 +395,20 @@ Content-Type: application/json
 }
 ```
 
+#### Motion Timeout
+
+A continuous move (`forward`, `backward`, `left`, `right`) sent to `POST /api/command` stops by itself, and the robot stands up, if no `/api/command` request is accepted for `motionTimeout` ms (default 3000). A client that crashes or loses WiFi mid-walk no longer leaves the robot walking.
+
+- To keep moving, re-send the same command about once a second. Any accepted `/api/command` resets the timer, face-only updates included. Re-sending the move the robot is already doing does not interrupt it, on older firmware too.
+- `stop`, or any other command that replaces the move, still ends it as before. One-shot poses are not timed.
+- Change it at runtime with `/setSettings?motionTimeout=<ms>` (500-60000; resets at reboot like the other settings). `#define MOTION_TIMEOUT_MS 0` above `#include "motion-watchdog.h"` starts it turned off (a later `/setSettings?motionTimeout=` turns it on).
+- Only moves started over the JSON API are timed. The web portal's arrow buttons (`/cmd?go=` on press, `/cmd?stop=1` on release) and the serial CLI (`rn wf` etc., which walk until another command arrives over HTTP) work as before, so a stop that never arrives from those is not covered.
+
 ### Available Commands
 
 **Movement Commands:**
 
-- `forward`, `backward`, `left`, `right` - Continuous movement (loops until stopped)
+- `forward`, `backward`, `left`, `right` - Continuous movement (loops until stopped, or until the motion timeout above)
 - `stop` - Immediately stop current movement
 
 **Pose Commands (one-shot animations):**
