@@ -1,3 +1,6 @@
+// Modified by BotInfo.ai, 2026-11-14: motion watchdog (a continuous move sent
+// to /api/command stops and stands up if no /api/command is accepted for
+// motionTimeout ms; re-send the move to keep going). See motion-watchdog.h.
 #include <WiFi.h>
 #include <WebServer.h>
 #include <DNSServer.h>
@@ -9,6 +12,7 @@
 #include "face-bitmaps.h"
 #include "movement-sequences.h"
 #include "captive-portal.h"
+#include "motion-watchdog.h"
 
 // --- Access Point Configuration ---
 // This is the network the Robot will create
@@ -117,6 +121,7 @@ int8_t servoSubtrim[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int frameDelay = 100;
 int walkCycles = 10;
 int motorCurrentDelay = 20; // ms delay between motor movements to prevent over-current
+MotionWatchdog motionWatchdog(MOTION_TIMEOUT_MS); // stops API moves when commands stop arriving
 
 struct FaceEntry {
   const char* name;
@@ -204,6 +209,7 @@ void exitIdle();
 void updateIdleBlink();
 int getFaceFpsForName(const String& faceName);
 bool pressingCheck(String cmd, int ms);
+void checkMotionWatchdog();
 void handleGetSettings();
 void handleSetSettings();
 void handleGetStatus();
@@ -237,6 +243,7 @@ void handleCommandWeb() {
   } 
   else if (server.hasArg("go")) {
     currentCommand = server.arg("go");
+    motionWatchdog.disarm(); // hold-to-move: the portal sends its own stop on release
     recordInput();
     exitIdle();
     server.send(200, "text/plain", "OK");
@@ -273,6 +280,7 @@ void handleGetSettings() {
   json += "\"walkCycles\":" + String(walkCycles) + ",";
   json += "\"motorCurrentDelay\":" + String(motorCurrentDelay) + ",";
   json += "\"faceFps\":" + String(faceFps);
+  json += ",\"motionTimeout\":" + String(motionWatchdog.timeoutMs());
   json += "}";
   server.send(200, "application/json", json);
 }
@@ -282,6 +290,7 @@ void handleSetSettings() {
   if (server.hasArg("walkCycles")) walkCycles = server.arg("walkCycles").toInt();
   if (server.hasArg("motorCurrentDelay")) motorCurrentDelay = server.arg("motorCurrentDelay").toInt();
   if (server.hasArg("faceFps")) faceFps = (int)max(1L, server.arg("faceFps").toInt());
+  if (server.hasArg("motionTimeout")) motionWatchdog.setTimeoutMs(clampMotionTimeoutMs(server.arg("motionTimeout").toInt()));
   server.send(200, "text/plain", "OK");
 }
 
@@ -366,6 +375,8 @@ void handleApiCommand() {
     setFace(face);
   }
   
+  motionWatchdog.feed(millis()); // any accepted command shows the controller is alive
+
   // If face-only, just acknowledge
   if (faceOnly) {
     recordInput();
@@ -380,6 +391,7 @@ void handleApiCommand() {
     server.send(200, "application/json", "{\"status\":\"ok\",\"message\":\"Command stopped\"}");
   } else {
     currentCommand = command;
+    if (isContinuousMove(command.c_str())) motionWatchdog.arm(millis());
     recordInput();
     exitIdle();
     server.send(200, "application/json", "{\"status\":\"ok\",\"message\":\"Command executed\"}");
@@ -758,6 +770,7 @@ void loop() {
   updateAnimatedFace();
   updateIdleBlink();
   updateWifiInfoScroll();
+  checkMotionWatchdog();
 
   if (currentCommand != "") {
     String cmd = currentCommand;
@@ -1062,6 +1075,7 @@ bool pressingCheck(String cmd, int ms) {
     server.handleClient();
     dnsServer.processNextRequest();
     updateAnimatedFace();
+    checkMotionWatchdog();
     if (currentCommand != cmd) {
       runStandPose(1);
       return false;
@@ -1069,6 +1083,15 @@ bool pressingCheck(String cmd, int ms) {
     yield();
   }
   return true;
+}
+
+// Stop a continuous move whose controller has gone quiet (motion-watchdog.h).
+// Clearing currentCommand is what "stop" does: pressingCheck() stands up.
+void checkMotionWatchdog() {
+  if (motionWatchdog.shouldStop(millis(), isContinuousMove(currentCommand.c_str()))) {
+    Serial.println(F("Motion timeout: no command received, stopping"));
+    currentCommand = "";
+  }
 }
 
 void recordInput() {
